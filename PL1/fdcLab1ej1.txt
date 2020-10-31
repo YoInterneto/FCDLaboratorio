@@ -1,0 +1,81 @@
+Para cada uno de los ficheros vamos a calcular todas las magnitudes vistas en el tema,
+es decir vamos a obtener las frecuencias, la media, que será la aritmética;
+las medidas de dispersión, desviación típica y varianza, y las medidas de
+ordenación, mediana y cuartiles, incluido el cuantil 54.
+Para los datos del fichero cardata.sav la variable analizada será mpg.
+
+
+#cargamos el archivo, en este caso se encuentra en el directorio de trabajo por lo que no hay que especificar formato
+sat<-read.table("satelites.txt")
+radio<-sat$Radio
+
+#Frecuencia absoluta y frecuencia absoluta acumulada
+fabsradio<-table(radio)
+fabsacumradio<-cumsum(frecabsradio)
+
+#para calcular la frecuencia relativa y la frecuencia relativa acumulada
+debemos crear funciones.
+frecrel<-function(radio){table(radio)/length(radio)}
+frecrelacum<-function(Radio){cumsum(table(radio))/length(radio)}
+
+#las guardamos en nuestro workspace para poder utilizarlas de nuevo en caso de necesidad
+dump("frecrel",file="frecrel.R")
+dump("frecrelacum",file="frecrelacum.R")
+
+#para cargarlas utilizariamos "source"
+source("frecrel.R")
+source("frecrelacum.R")
+
+#calculamos los valores
+frelradio<-frecrel(radio)
+frelacumradio<-frecrelacum(radio)
+
+#media
+mediaradio<-mean(radio)
+
+#medidas de dispersion, desviacion tipica y varianza
+sdradio<-sd(radio)
+varradio<-var(radio)
+#vemos que los valores que hemos calculado no corresponden con los valores calculados
+en papel, esto sucede porque estas funciones(sd,var) realizan el calculo utiliazando n-1
+en lugar de n valores, podemos corregir estos resultados de la siguiente manera
+#Como tenemos 12 valores, haremos lo siguiente.
+sdradio<-sqrt((sdr^2)*11/12)
+varr<-varr*11/12
+
+#medidas de ordenacion
+#1era formas
+cuar1r<-quantile(radio, 0.25) #primer cuantil
+cuar2r<-quantile(radio, 0.5) #segundo cuantil o mediana
+cuar3r<-quantile(radio, 0.75) #tercer cuantil
+perc54r<-quantile(radio, 0.54) #percentil 54
+#2da forma.
+summary(radio) #min, 1stqu, median, mean, 3rdqu, max
+fivenum(radio) #5 numeros de tuckey(min, qu1, median, qu3, max)
+
+
+#FICHERO CARDATA. Mismos valores, salvo cuantil54 y frecuencias
+#para leer el archivo cardata, al ser .sav necesitamos el paquete "foreign"
+#utilizamos la funcion library para cargarla ya que este paquete está instalado por defecto
+library(foreign)
+#comprobamos que se ha cargado con exito
+search()
+
+
+#cargamos el archivo cardata.sav
+cardata = read.spss("cardata.sav")
+mpg<-cardata$mpg
+#como tenemos muchos valores nulos(NA), debemos reasignar mpg para poder trabajar con los datos de forma correcta
+mpg<-mpg[!is.na(mpg)]
+
+#medidas de dispersion, desviacion tipica y varianza
+sdmpg<-sd(mpg)
+varmpg<-var(mpg)
+
+#medidas de ordenacion
+#Como hemos visto anteriormente para calcular los valores: minimo, maximo, 1er y 3er cuantil, mediana y media tenemos 2 opciones
+#1
+mean(mpg)
+fivenum(mpg)
+#2
+summary(mpg)
