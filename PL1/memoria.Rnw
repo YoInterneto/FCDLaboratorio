@@ -27,7 +27,7 @@ En este primer ejercicio se va a realizar un análisis, utilizando R, de diferen
 \item Cuantil 54.
 \end {enumerate}
 
-<<cargar_funciones_credas, echo=FALSE>>=
+<<hola, echo=FALSE>>=
 saveToPdf <- function(name){
   Sweave(paste(name, ".Rnw", sep=""))
   tools::texi2pdf(paste(name, ".tex", sep=""),clean=T)
@@ -63,6 +63,8 @@ radio <- satelites$radio
 # Observamos el vector de datos:
 radio
 @
+
+rango(radio)
 
 Hemos automatizado este proceso con esta función para hacerlo más sencillo.
 <<saveToPdf>>=
