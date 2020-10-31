@@ -25,7 +25,7 @@
 
 \maketitle
 
-\section{Ejercicio 1 - Análisis de descipción de datos}
+\section{Ejercicio 1 - Análisis de descipción de datos satelites.txt}  
 
 \subsection{Introducción}
 En el siguiente documento se mostrarán los resultados obtenidos de la Práctica 1 de FCD. Esta práctica tiene como objetivo 
