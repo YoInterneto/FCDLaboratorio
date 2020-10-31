@@ -1,5 +1,6 @@
 \documentclass[a4paper]{article}
 
+
 \usepackage[latin1]{inputenc}
 \usepackage[spanish]{babel}
 \usepackage{amsmath,amsfonts,amssymb}
