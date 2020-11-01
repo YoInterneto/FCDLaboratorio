@@ -9,7 +9,7 @@
 
 \begin{document}
 \maketitle
-\SweaveOpts{concordance=TRUE, cache=TRUE}
+\input{memoria-concordance}
 
 \section{Ejercicio 1 - Análisis de descripción de datos}  
 
@@ -29,33 +29,39 @@ En este primer ejercicio se va a realizar un análisis, utilizando R, de diferen
 
 Para realizar el cálculo de todas las magnitudes vistas anteriormente, se ha creado un archivo .R en donde se encuentra el código para calcularlas. Para poder utilizar este archivo realizamos lo siguiente:
 
-<<>>==
-rango <-
-function(vector)(max(vector)-min(vector))
+\begin{Schunk}
+\begin{Sinput}
+> rango <-
++ function(vector)(max(vector)-min(vector))
+> frecuencia_absoluta <-
++ function(vector)(table(" "=vector))
+> frecuencia_absoluta_acumulada <-
++ function(vector)(cumsum(frecuencia_absoluta(vector)))
+> frecuencia_relativa <-
++ function(vector)(round(frecuencia_absoluta(vector)/length(vector), 4))
+> frecuencia_relativa_acumulada <-
++ function(vector)(round(frecuencia_absoluta_acumulada(vector)/length(vector), 4))
+\end{Sinput}
+\end{Schunk}
 
-frecuencia_absoluta <-
-function(vector)(table(" "=vector))
-
-frecuencia_absoluta_acumulada <-
-function(vector)(cumsum(frecuencia_absoluta(vector)))
-
-frecuencia_relativa <-
-function(vector)(round(frecuencia_absoluta(vector)/length(vector), 4))
-
-frecuencia_relativa_acumulada <-
-function(vector)(round(frecuencia_absoluta_acumulada(vector)/length(vector), 4))
-@
-
-<<>>==
-
-# Se importa el archivo y se almacena en una variable
-satelites <- read.table("./data/satelites.txt")
-# Sacamos la variable con la que queremos trabajar de la tabla:
-radio <- satelites$Radio
-# Observamos el vector de datos:
-radio
-
-rango(radio)
-@
+\begin{Schunk}
+\begin{Sinput}
+> # Se importa el archivo y se almacena en una variable
+> satelites <- read.table("./data/satelites.txt")
+> # Sacamos la variable con la que queremos trabajar de la tabla:
+> radio <- satelites$Radio
+> # Observamos el vector de datos:
+> radio
+\end{Sinput}
+\begin{Soutput}
+ [1] 13 16 22 33 29 42 27 34 20 30 20 15
+\end{Soutput}
+\begin{Sinput}
+> rango(radio)
+\end{Sinput}
+\begin{Soutput}
+[1] 29
+\end{Soutput}
+\end{Schunk}
 
 \end{document}
