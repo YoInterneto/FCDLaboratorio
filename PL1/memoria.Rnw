@@ -3,6 +3,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
 \usepackage{Sweave}
+\usepackage{hyperref}
+
 
 \title{PECL1 - Fundamentos de la ciencia de datos}
 \author{Mario Adán Herrero \and Alberto González Martínez \and Branimir Stefanov Yanev \and Diego Gutiérrez Marco}
@@ -11,51 +13,381 @@
 \maketitle
 \SweaveOpts{concordance=TRUE, cache=TRUE}
 
-\section{Ejercicio 1 - Análisis de descripción de datos}  
+\begin{abstract}
+En el siguiente documento se presentan los resultados y solución de la PECL1 del laboratorio de Fundamentos de la Ciencia de Datos.
+Se realizará un análisis estadísticos sobre diferentes datos proporcionados por el profesor y mediante funciones programadas en R se mostrarán los resultados en este pdf utilizando las herramientas Sweave y TinyTex/MikTex.
 
-\subsection{Introducción}
-En este primer ejercicio se va a realizar un análisis, utilizando R, de diferentes archivos proporcionados por el profesor, estos archivos son “satelites.txt” y “cardata.sav”, los cuales contienen radios sobre los satélites de Urano (satelites.txt) y datos de automóviles cardata.sav). Para estos datos se hallarán las siguientes magnitudes:
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Introducción} 
+La práctica consta de dos ejercicios, en los cuales se utilizan archivos de datos de diferentes extensiones.\\
+En este primer ejercicio se va a realizar un análisis, utilizando R, de diferentes archivos proporcionados por el profesor, estos archivos son “satelites.txt” y “cardata.sav”, los cuales contienen radios sobre los satélites de Urano (satelites.txt) y datos de automóviles cardata.sav).\\
+En el segundo ejercicio, los datos del archivo “satelites.txt”, se han pasado a formato excel .xlsx, además se utilizarán nuevas librería y funciones para hallar las magnitudes.\\
+Para estos dos ejercicios se hallarán las siguientes magnitudes:
 
 \begin{enumerate}
 \item Frecuencias.
 \item Media aritmética.
 \item Varianza.
 \item Desviación típica.
-\item Rango.
 \item Mediana.
+\item Rango.
 \item Cuartiles.
 \item Cuantil 54.
 \end {enumerate}
 
-Para realizar el cálculo de todas las magnitudes vistas anteriormente, se ha creado un archivo .R en donde se encuentra el código para calcularlas. Para poder utilizar este archivo realizamos lo siguiente:
-
+\section{Ejercicio 1.1 - Análisis de descripción de datos (satelites.txt)}
+El primer paso a realizar es cargar los el archivo de texto que contiene los datos a estudiar y obtener el vector de datos que nos interesa, en este caso el vector radio. A continuación, se muestra el proceso:
 <<>>==
-rango <-
-function(vector)(max(vector)-min(vector))
-
-frecuencia_absoluta <-
-function(vector)(table(" "=vector))
-
-frecuencia_absoluta_acumulada <-
-function(vector)(cumsum(frecuencia_absoluta(vector)))
-
-frecuencia_relativa <-
-function(vector)(round(frecuencia_absoluta(vector)/length(vector), 4))
-
-frecuencia_relativa_acumulada <-
-function(vector)(round(frecuencia_absoluta_acumulada(vector)/length(vector), 4))
+# Obtenemos y guardamos el archivo satelites.txt de la carpeta donde está almacenado:
+satelites <- read.table("./data/satelites.txt")
+# Accedemos al valor de radio del archivo:
+radio <- satelites$Radio
+# Mostramos el valor del vector radio:
+radio
 @
 
+Una vez extraído el valor del radio en ubicado en la variable \textit{radio}, realizamos las operaciones que citamos anteriormente.
+
+\subsection{Cálculo de frecuencias}
+A continuación se muestran las fórmulas empleadas y los resultados de calcular las diferentes frecuencias sobre el vector radio obtenido anteriormente.
+
+\subsubsection{Frecuencias absolutas}
+Fórmula y resultado de las frecuencias absolutas:
+<<echo=true>>==
+frecuencia_absoluta <- function(vector)(table(" "=vector))
+frecuencia_absoluta(radio)
+@
+
+\subsubsection{Frecuencias absolutas acumuladas}
+Fórmula y resultado de las frecuencias absolutas acumuladas:
+<<echo=true>>==
+frecuencia_absoluta_acumulada <- function(vector)(cumsum(frecuencia_absoluta(vector)))
+frecuencia_absoluta_acumulada(radio)
+@
+
+\subsubsection{Frecuencias relativas}
+Fórmula y resultado de las frecuencias relativas:
+<<echo=true>>==
+frecuencia_relativa <- function(vector)(round(frecuencia_absoluta(vector)/length(vector), 4))
+frecuencia_relativa(radio)
+@
+
+\subsubsection{Frecuencias relativas acumuladas}
+Fórmula y resultado de las frecuencias relativas acumuladas:
+<<echo=true>>==
+frecuencia_relativa_acumulada <- function(vector)(round(frecuencia_absoluta_acumulada(vector)/length(vector), 4))
+frecuencia_relativa_acumulada(radio)
+@
+
+\subsection{Media Aritmética}
+Mediante la función que nos proporciona R calculamos la media aritmética redondeada a dos decimales. 
 <<>>==
+media_aritmetica <- function(vector)(round(mean(vector), 2))
+media_aritmetica(radio)
+@
 
-# Se importa el archivo y se almacena en una variable
-satelites <- read.table("./data/satelites.txt")
-# Sacamos la variable con la que queremos trabajar de la tabla:
-radio <- satelites$Radio
-# Observamos el vector de datos:
-radio
+\subsection{Varianza}
+Mediante la función que nos proporciona R calculamos la varianza redondeada a 2 decimales. 
+<<>>==
+varianza <- function(vector)(round(var(vector), 2))
+varianza(radio)
+@
 
+\subsection{Desviación típica}
+Mediante la función que nos proporciona R calculamos la desviación típica redondeada a 2 decimales.
+<<>>==
+desviacion_tipica <- function(vector)(round(sd(vector), 2))
+desviacion_tipica(radio)
+@
+
+
+\subsection{Mediana}
+Mediante la función que nos proporciona R calculamos la mediana. 
+<<>>==
+mediana <- function(vector)(median(vector))
+mediana(radio)
+@
+
+\subsection{Rango}
+Creamos una función para realizar el cálculo del rango sobre el vector radio.
+<<>>==
+rango <- function(vector)(max(vector)-min(vector))
 rango(radio)
 @
+
+\subsection{Cuartiles y cuantil 54}
+Mediante la función que nos proporciona R calculamos los cuartiles y el cuantil 54. 
+\subsubsection{Cuartil 1}
+Cálculo del cuartil 1:
+<<>>==
+quantile(radio, 0.25)
+@
+
+\subsubsection{Cuartil 2}
+Cálculo del cuartil 2:
+<<>>==
+quantile(radio, 0.50)
+@
+
+\subsubsection{Cuartil 3}
+Cálculo del cuartil 3:
+<<>>==
+quantile(radio, 0.75)
+@
+
+\subsubsection{Cuartil 4}
+Cálculo del cuartil 4:
+<<>>==
+quantile(radio, 1.00)
+@
+
+\subsubsection{Cuantil 54}
+Por otro lado, el Cuantil 54
+<<>>==
+quantile(radio, 0.54)
+@
+
+\section{Ejercicio 1.2 - Análisis de descripción de datos (cardata.sav)}
+
+Fichero Cardata. Mismos valores, salvo Cuantil 54 y frecuencias. Para leer el archivo cardata, al ser .sav necesitamos el paquete "foreign" por lo que utilizamos la función library para cargarla ya que este paquete está instalado por defecto:
+<<>>==
+# Cargamos las librerias:
+library(foreign)  # Libreria foreign
+library(xtable)
+@
+
+<<>>==
+# Obtenemos y guardamos el archivo cardata.sav de la carpeta donde está almacenado:
+cardata <-read.spss("./data/cardata.sav")
+# Sacamos la variable con la que queremos trabajar de la tabla:
+mpg<-cardata$mpg
+#como tenemos muchos valores nulos(NA), debemos reasignar mpg para poder trabajar con los datos de forma correcta
+mpg<-mpg[!is.na(mpg)]
+#Mostramos los datos
+mpg
+@
+
+Tras esto calculamos las magnitudes calculadas en el los apartados anteriores, pero, en vez de usar el vector radio usamos mpg.
+
+\subsection{Cálculo de frecuencias}
+A continuación se muestran las fórmulas empleadas y los resultados de calcular las diferentes frecuencias sobre el vector radio obtenido anteriormente.
+
+\subsubsection{Frecuencias absolutas}
+Fórmula y resultado de las frecuencias absolutas:
+<<echo=true>>==
+frecuencia_absoluta <- function(vector)(table(" "=vector))
+frecuencia_absoluta(mpg)
+@
+
+\subsubsection{Frecuencias absolutas acumuladas}
+Fórmula y resultado de las frecuencias absolutas acumuladas:
+<<echo=true>>==
+frecuencia_absoluta_acumulada <- function(vector)(cumsum(frecuencia_absoluta(vector)))
+frecuencia_absoluta_acumulada(mpg)
+@
+
+\subsubsection{Frecuencias relativas}
+Fórmula y resultado de las frecuencias relativas:
+<<echo=true>>==
+frecuencia_relativa <- function(vector)(round(frecuencia_absoluta(vector)/length(vector), 4))
+frecuencia_relativa(mpg)
+@
+
+\subsubsection{Frecuencias relativas acumuladas}
+Fórmula y resultado de las frecuencias relativas acumuladas:
+<<echo=true>>==
+frecuencia_relativa_acumulada <- function(vector)(round(frecuencia_absoluta_acumulada(vector)/length(vector), 4))
+frecuencia_relativa_acumulada(mpg)
+@
+
+\subsection{Media Aritmética}
+Mediante la función que nos proporciona R calculamos la media aritmética redondeada a dos decimales. 
+<<>>==
+media_aritmetica <- function(vector)(round(mean(vector), 2))
+media_aritmetica(mpg)
+@
+
+\subsection{Varianza}
+Mediante la función que nos proporciona R calculamos la varianza redondeada a 2 decimales. 
+<<>>==
+varianza <- function(vector)(round(var(vector), 2))
+varianza(mpg)
+@
+
+\subsection{Desviación típica}
+Mediante la función que nos proporciona R calculamos la desviación típica redondeada a 2 decimales.
+<<>>==
+desviacion_tipica <- function(vector)(round(sd(vector), 2))
+desviacion_tipica(mpg)
+@
+
+\subsection{Mediana}
+Mediante la función que nos proporciona R calculamos la mediana. 
+<<>>==
+mediana <- function(vector)(median(vector))
+mediana(mpg)
+@
+
+\subsection{Rango}
+Creamos una función para realizar el cálculo del rango sobre el vector radio.
+<<>>==
+rango <- function(vector)(max(vector)-min(vector))
+rango(mpg)
+@
+
+\subsection{Cuartiles y cuantil 54}
+Mediante la función que nos proporciona R calculamos los cuartiles y el cuantil 54. 
+\subsubsection{Cuartil 1}
+Cálculo del cuartil 1:
+<<>>==
+quantile(mpg, 0.25)
+@
+
+\subsubsection{Cuartil 2}
+Cálculo del cuartil 2:
+<<>>==
+quantile(mpg, 0.50)
+@
+
+\subsubsection{Cuartil 3}
+Cálculo del cuartil 3:
+<<>>==
+quantile(mpg, 0.75)
+@
+
+\subsubsection{Cuartil 4}
+Cálculo del cuartil 4:
+<<>>==
+quantile(mpg, 1.00)
+@
+
+\subsubsection{Cuantil 54}
+Por otro lado, el Cuantil 54
+<<>>==
+quantile(mpg, 0.54)
+@
+
+\section{Ejercicio 2 -  Análisis con R de fichero excel (satelites.xls} 
+En el ejercicio 2 se van a calcular las mismas magnitudes que se hallaron en el ejercicio 1, pero en este caso, se utilizarán nuevas funciones y librerías. Además el archivo de donde se leen los datos será un .xlsx.\\
+Para utilizar nuevas funciones se han instalado los siguientes paquetes; textit{xlsx} y \textit{pastecs}. Estos paquetes se han instalado de la siguiente forma:
+
+\begin{verbatim}
+install.packages("pastecs")
+install.packages("xlsx")
+\end{verbatim}
+
+Tras esto, se ha procedido a leer los datos:
+
+<<>>==
+# Cargamos la libreria:
+library(xlsx)
+@
+
+<<>>==
+# Obtenemos y guardamos el archivo "satelites.xlsx" de la carpeta donde está almacenado:
+satelites <- read.xlsx("./data/satelites.xlsx", 1)
+# Sacamos la variable con la que queremos trabajar de la tabla:
+radio <- satelites$radio
+@
+
+\subsection{Uso de data, frame, y table}
+
+
+Una vez leídos, se ha utilizado \textit{table()} para calcular las frecuencias absolutas y \textit{prop.table()} para el cálculo de las frecuencias
+relativas. Usamos \textit{data.frame()} para manipular las tablas usando nombres de columna y para mostrarlo en una sola tabla con nombres.
+
+\subsection{Cálculo de frecuencias}
+A continuación se muestran las fórmulas empleadas y los resultados de las diferentes frecuencias expresados en una tabla.
+
+\subsubsection{Frecuencias absolutas}
+Fórmula de las frecuencias absolutas:
+<<>>==
+frecuencia_absoluta <- data.frame(table(radio))
+@
+
+\subsubsection{Frecuencias absolutas acumuladas}
+Fórmula de las frecuencias absolutas acumuladas:
+<<>>==
+frecuencia_absoluta_acumulada <- cumsum(frecAbs["Freq"])
+@
+
+\subsubsection{Frecuencias relativas}
+Fórmula de las frecuencias relativas:
+<<>>==
+frecuencia_relativa <- prop.table(frecAbs["Freq"])
+@
+
+\subsubsection{Frecuencias relativas acumuladas}
+Fórmula de las frecuencias relativas acumuladas:
+<<>>==
+frecuencia_relativa_acumulada <- cumsum(frecRel["Freq"])
+@
+
+A continuación, utilizamos data.frame() para todo lo calculado anteriormente, en un tabla y poder presentarlo de forma distinta a los anteriores apartados
+<<>>==
+frecuencias <- data.frame(
+    frecuencia_absoluta["radio"],
+    frecuencia_absoluta["Freq"],
+    frecuencia_absoluta_acumulada["Freq"],
+    frecuencia_relativa ["Freq"],
+    frecuencia_relativa_acumulada ["Freq"]
+)
+
+# Damos nombres a las entradas de la tabla
+names(frecuencias) <- c("Radio", "Absoluta", "Abs. acumulada",
+                        "Relativa", "Rel. acumulada")
+
+# Mostramos la tabla
+frecuencias
+@
+
+\subsection{Uso de pastecs}
+Alternativamente, empleamos el paquete \textit{pastecs} para el cálculo de la media, mediana, mínimo, máximo y medidas de dispersión.
+
+\subsubsection{Cálculo de media, mediana y medidas de dispersión } 
+<<>>==
+
+# Cargamos la librería
+library(pastecs)
+
+# cargamos funciones sobre la tabla
+dispersion <- stat.desc(radio)[c("mean", "var", "std.dev", "range", "median")]
+
+# Establecemos nombres para la tabla 
+names(dispersion) <- c("Media", "Varianza", "Desv. típica", "Rango", "Mediana")
+
+# Mostramos por pantalla
+dispersion
+@
+
+\subsubsection{Cuartiles y cuantil 54}
+Utilizamos las funciones de pastecs para calcular y visulizar una tabla con información para los cuartiles y cuantil 54. 
+
+<<>>==
+# Hallamos el cuantil 54
+cuantil54 <- quantile(radio, 0.54)
+
+# Añadimos a al lista de cuartiles el cuantil 54 y ordenamos
+cuartiles <- c(summary(radio), cuantil54)
+cuartiles <- cuartiles[order(unlist(cuartiles))]
+
+# Mostramos la tabla final
+print(cuartiles)
+@
+
+
+\section{Conclusiones}
+
+Con esta primera práctica nos hemos iniciado en el lenguaje de programación R, y cómo trabajar en su entorno. Además, se ha hecho uso de \textit{Latex} para generar documentos científicos relacionados con el estudio de datos, empleando la herramienta \textit{Sweavy}.
+
+Se ha podido observar que es un lenguaje potente que, en poco tiempo, puede analizar una gran cantidad de datos. También destacar que R cuenta con soporte de la comunidad
+a la hora de crear nuevos paquetes, algoritmos y funcionalidades.
 
 \end{document}
