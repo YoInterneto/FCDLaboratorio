@@ -15,7 +15,7 @@
 
 \begin{abstract}
 En el siguiente documento se presentan los resultados y solución de la PECL1 del laboratorio de Fundamentos de la Ciencia de Datos.
-Se realizará un análisis estadístico sobre diferentes datos proporcionados por el profesor y mediante funciones programadas en R se mostrarán los resultados en este pdf utilizando las herramientas Sweave y TinyTex/MikTex.
+Se realizará un análisis estadísticos sobre diferentes datos proporcionados por el profesor y mediante funciones programadas en R se mostrarán los resultados en este pdf utilizando las herramientas Sweave y TinyTex/MikTex.
 
 \end{abstract}
 
@@ -27,8 +27,8 @@ Se realizará un análisis estadístico sobre diferentes datos proporcionados po
 
 \section{Introducción} 
 La práctica consta de dos ejercicios, en los cuales se utilizan archivos de datos de diferentes extensiones.\\
-En este primer ejercicio se va a realizar un análisis, utilizando R, de diferentes archivos proporcionados por el profesor, estos archivos son “satelites.txt” y “cardata.sav”, los cuales contienen radios sobre los satélites de Urano (satelites.txt) y datos de automóviles (cardata.sav).\\
-En el segundo ejercicio, los datos del archivo “satelites.txt” se han pasado a formato excel .xlsx y, además, se han utilizado nuevas librería y funciones para hallar las magnitudes.\\
+En este primer ejercicio se va a realizar un análisis, utilizando R, de diferentes archivos proporcionados por el profesor, estos archivos son “satelites.txt” y “cardata.sav”, los cuales contienen radios sobre los satélites de Urano (satelites.txt) y datos de automóviles cardata.sav).\\
+En el segundo ejercicio, los datos del archivo “satelites.txt”, se han pasado a formato excel .xlsx, además se utilizarán nuevas librería y funciones para hallar las magnitudes.\\
 Para estos dos ejercicios se hallarán las siguientes magnitudes:
 
 \begin{enumerate}
@@ -43,10 +43,11 @@ Para estos dos ejercicios se hallarán las siguientes magnitudes:
 \end {enumerate}
 
 \section{Ejercicio 1.1 - Análisis de descripción de datos (satelites.txt)}
-El primer paso a realizar es cargar el archivo de texto que contiene los datos a estudiar y obtener el vector de datos que nos interesa, en este caso el vector radio. A continuación, se muestra el proceso:
+El primer paso a realizar es cargar los el archivo de texto que contiene los datos a estudiar y obtener el vector de datos que nos interesa, en este caso el vector radio. A continuación, se muestra el proceso:
 \begin{Schunk}
 \begin{Sinput}
-> # Obtenemos y guardamos el archivo satelites.txt de la carpeta donde está almacenado:
+> # Obtenemos y guardamos el archivo satelites.txt 
+> #  de la carpeta donde está almacenado:
 > satelites <- read.table("./data/satelites.txt")
 > # Accedemos al valor de radio del archivo:
 > radio <- satelites$Radio
@@ -251,11 +252,13 @@ Fichero Cardata. Mismos valores, salvo Cuantil 54 y frecuencias. Para leer el ar
 
 \begin{Schunk}
 \begin{Sinput}
-> # Obtenemos y guardamos el archivo cardata.sav de la carpeta donde está almacenado:
+> # Obtenemos y guardamos el archivo cardata.sav 
+> #  de la carpeta donde está almacenado:
 > cardata <-read.spss("./data/cardata.sav")
 > # Sacamos la variable con la que queremos trabajar de la tabla:
 > mpg<-cardata$mpg
-> #como tenemos muchos valores nulos(NA), debemos reasignar mpg para poder trabajar\\ con los datos de forma correcta
+> # Como tenemos muchos valores nulos(NA), debemos reasignar mpg 
+> #  para poder trabajar con los datos de forma correcta
 > mpg<-mpg[!is.na(mpg)]
 > #Mostramos los datos
 > mpg
@@ -309,7 +312,8 @@ Fórmula y resultado de las frecuencias absolutas:
 Fórmula y resultado de las frecuencias absolutas acumuladas:
 \begin{Schunk}
 \begin{Sinput}
-> frecuencia_absoluta_acumulada <- function(vector)(cumsum(frecuencia_absoluta(vector)))
+> frecuencia_absoluta_acumulada <- function(vector)
++ (cumsum(frecuencia_absoluta(vector)))
 > frecuencia_absoluta_acumulada(mpg)
 \end{Sinput}
 \begin{Soutput}
@@ -334,7 +338,8 @@ Fórmula y resultado de las frecuencias absolutas acumuladas:
 Fórmula y resultado de las frecuencias relativas:
 \begin{Schunk}
 \begin{Sinput}
-> frecuencia_relativa <- function(vector)(round(frecuencia_absoluta(vector)/length(vector), 4))
+> frecuencia_relativa <- function(vector)
++ (round(frecuencia_absoluta(vector)/length(vector), 4))
 > frecuencia_relativa(mpg)
 \end{Sinput}
 \begin{Soutput}
@@ -368,7 +373,7 @@ Fórmula y resultado de las frecuencias relativas acumuladas:
 \begin{Schunk}
 \begin{Sinput}
 > frecuencia_relativa_acumulada <- function(vector)
-+     (round(frecuencia_absoluta_acumulada(vector)/length(vector), 4))
++ (round(frecuencia_absoluta_acumulada(vector)/length(vector), 4))
 > frecuencia_relativa_acumulada(mpg)
 \end{Sinput}
 \begin{Soutput}
@@ -568,3 +573,102 @@ Fórmula de las frecuencias absolutas acumuladas:
 \begin{Schunk}
 \begin{Sinput}
 > frecuencia_absoluta_acumulada <- cumsum(frecAbs["Freq"])
+\end{Sinput}
+\end{Schunk}
+
+\subsubsection{Frecuencias relativas}
+Fórmula de las frecuencias relativas:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencia_relativa <- prop.table(frecAbs["Freq"])
+\end{Sinput}
+\end{Schunk}
+
+\subsubsection{Frecuencias relativas acumuladas}
+Fórmula de las frecuencias relativas acumuladas:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencia_relativa_acumulada <- cumsum(frecRel["Freq"])
+\end{Sinput}
+\end{Schunk}
+
+A continuación, utilizamos data.frame() para mostrar todo lo calculado anteriormente, en un tabla, y poder presentarlo de forma distinta a los anteriores apartados:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencias <- data.frame(
++     frecuencia_absoluta["radio"],
++     frecuencia_absoluta["Freq"],
++     frecuencia_absoluta_acumulada["Freq"],
++     frecuencia_relativa ["Freq"],
++     frecuencia_relativa_acumulada ["Freq"]
++ )
+> # Damos nombres a las entradas de la tabla
+> names(frecuencias) <- c("Radio", "Absoluta", "Abs. acumulada",
++                         "Relativa", "Rel. acumulada")
+> # Mostramos la tabla
+> frecuencias
+\end{Sinput}
+\begin{Soutput}
+   Radio Absoluta Abs. acumulada   Relativa Rel. acumulada
+1     13        1              1 0.08333333     0.08333333
+2     15        1              2 0.08333333     0.16666667
+3     16        1              3 0.08333333     0.25000000
+4     20        2              5 0.16666667     0.41666667
+5     22        1              6 0.08333333     0.50000000
+6     27        1              7 0.08333333     0.58333333
+7     30        1              8 0.08333333     0.66666667
+8     33        1              9 0.08333333     0.75000000
+9     34        1             10 0.08333333     0.83333333
+10    39        1             11 0.08333333     0.91666667
+11    42        1             12 0.08333333     1.00000000
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Uso de pastecs}
+Alternativamente, empleamos el paquete \textit{pastecs} para el cálculo de la media, mediana, mínimo, máximo y medidas de dispersión.
+
+\subsubsection{Cálculo de media, mediana y medidas de dispersión } 
+\begin{Schunk}
+\begin{Sinput}
+> # Cargamos la librería
+> library(pastecs)
+> # cargamos funciones sobre la tabla
+> dispersion <- stat.desc(radio)[c("mean", "var", "std.dev", "range", "median")]
+> # Establecemos nombres para la tabla 
+> names(dispersion) <- c("Media", "Varianza", "Desv. típica", "Rango", "Mediana")
+> # Mostramos por pantalla
+> dispersion
+\end{Sinput}
+\begin{Soutput}
+       Media     Varianza Desv. típica        Rango      Mediana 
+   25.916667    93.901515     9.690279    29.000000    24.500000 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Cuartiles y cuantil 54}
+Utilizamos las funciones de pastecs para calcular y visulizar una tabla con información para los cuartiles y cuantil 54. 
+
+\begin{Schunk}
+\begin{Sinput}
+> # Hallamos el cuantil 54
+> cuantil54 <- quantile(radio, 0.54)
+> # Añadimos a al lista de cuartiles el cuantil 54 y ordenamos
+> cuartiles <- c(summary(radio), cuantil54)
+> cuartiles <- cuartiles[order(unlist(cuartiles))]
+> # Mostramos la tabla final
+> print(cuartiles)
+\end{Sinput}
+\begin{Soutput}
+    Min.  1st Qu.   Median     Mean      54%  3rd Qu.     Max. 
+13.00000 19.00000 24.50000 25.91667 26.70000 33.25000 42.00000 
+\end{Soutput}
+\end{Schunk}
+
+
+\section{Conclusiones}
+
+Mediante esta práctica, nos hemos introducido al lenguaje de programación R y a algunas de sus herramientas, como es el caso de \textit{Latex}, sistema de preparación de documentos para composición de texto de alta calidad o de Sweave, componente de R que permite la integración de código en documentos escritos con \textit{Latex}.
+
+Con el uso de todas estas herramientas, se ha podido realizar un análisis de un conjunto de datos, aplicando los conocimientos vistos en la teoría (calculo de distintas magnitudes como lo son las frecuancias, la media aritmética, o la varianza entre otros).
+
+\end{document}
