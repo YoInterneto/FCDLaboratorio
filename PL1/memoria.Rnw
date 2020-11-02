@@ -6,7 +6,7 @@
 \usepackage{hyperref}
 
 
-\title{PECL1 - Fundamentos de la ciencia de datos}
+\title{PECL1 - Fundamentos de la Ciencia de Datos}
 \author{Mario Adán Herrero \and Alberto González Martínez \and Branimir Stefanov Yanev \and Diego Gutiérrez Marco}
 
 \begin{document}
@@ -15,7 +15,7 @@
 
 \begin{abstract}
 En el siguiente documento se presentan los resultados y solución de la PECL1 del laboratorio de Fundamentos de la Ciencia de Datos.
-Se realizará un análisis estadísticos sobre diferentes datos proporcionados por el profesor y mediante funciones programadas en R se mostrarán los resultados en este pdf utilizando las herramientas Sweave y TinyTex/MikTex.
+Se realizará un análisis estadístico sobre diferentes datos proporcionados por el profesor y mediante funciones programadas en R se mostrarán los resultados en este pdf utilizando las herramientas Sweave y TinyTex/MikTex.
 
 \end{abstract}
 
@@ -27,8 +27,8 @@ Se realizará un análisis estadísticos sobre diferentes datos proporcionados p
 
 \section{Introducción} 
 La práctica consta de dos ejercicios, en los cuales se utilizan archivos de datos de diferentes extensiones.\\
-En este primer ejercicio se va a realizar un análisis, utilizando R, de diferentes archivos proporcionados por el profesor, estos archivos son “satelites.txt” y “cardata.sav”, los cuales contienen radios sobre los satélites de Urano (satelites.txt) y datos de automóviles cardata.sav).\\
-En el segundo ejercicio, los datos del archivo “satelites.txt”, se han pasado a formato excel .xlsx, además se utilizarán nuevas librería y funciones para hallar las magnitudes.\\
+En este primer ejercicio se va a realizar un análisis, utilizando R, de diferentes archivos proporcionados por el profesor, estos archivos son “satelites.txt” y “cardata.sav”, los cuales contienen radios sobre los satélites de Urano (satelites.txt) y datos de automóviles (cardata.sav).\\
+En el segundo ejercicio, los datos del archivo “satelites.txt” se han pasado a formato excel .xlsx y, además, se han utilizado nuevas librería y funciones para hallar las magnitudes.\\
 Para estos dos ejercicios se hallarán las siguientes magnitudes:
 
 \begin{enumerate}
@@ -43,7 +43,7 @@ Para estos dos ejercicios se hallarán las siguientes magnitudes:
 \end {enumerate}
 
 \section{Ejercicio 1.1 - Análisis de descripción de datos (satelites.txt)}
-El primer paso a realizar es cargar los el archivo de texto que contiene los datos a estudiar y obtener el vector de datos que nos interesa, en este caso el vector radio. A continuación, se muestra el proceso:
+El primer paso a realizar es cargar el archivo de texto que contiene los datos a estudiar y obtener el vector de datos que nos interesa, en este caso el vector radio. A continuación, se muestra el proceso:
 <<>>==
 # Obtenemos y guardamos el archivo satelites.txt de la carpeta donde está almacenado:
 satelites <- read.table("./data/satelites.txt")
@@ -53,7 +53,7 @@ radio <- satelites$Radio
 radio
 @
 
-Una vez extraído el valor del radio en ubicado en la variable \textit{radio}, realizamos las operaciones que citamos anteriormente.
+Una vez extraídos los valores de los radios y almacenados en la variable \textit{radio}, realizamos las operaciones que citamos anteriormente.
 
 \subsection{Cálculo de frecuencias}
 A continuación se muestran las fórmulas empleadas y los resultados de calcular las diferentes frecuencias sobre el vector radio obtenido anteriormente.
@@ -168,7 +168,7 @@ library(xtable)
 cardata <-read.spss("./data/cardata.sav")
 # Sacamos la variable con la que queremos trabajar de la tabla:
 mpg<-cardata$mpg
-#como tenemos muchos valores nulos(NA), debemos reasignar mpg para poder trabajar con los datos de forma correcta
+#como tenemos muchos valores nulos(NA), debemos reasignar mpg para poder trabajar\\ con los datos de forma correcta
 mpg<-mpg[!is.na(mpg)]
 #Mostramos los datos
 mpg
@@ -203,7 +203,8 @@ frecuencia_relativa(mpg)
 \subsubsection{Frecuencias relativas acumuladas}
 Fórmula y resultado de las frecuencias relativas acumuladas:
 <<echo=true>>==
-frecuencia_relativa_acumulada <- function(vector)(round(frecuencia_absoluta_acumulada(vector)/length(vector), 4))
+frecuencia_relativa_acumulada <- function(vector)
+    (round(frecuencia_absoluta_acumulada(vector)/length(vector), 4))
 frecuencia_relativa_acumulada(mpg)
 @
 
@@ -330,7 +331,7 @@ Fórmula de las frecuencias relativas acumuladas:
 frecuencia_relativa_acumulada <- cumsum(frecRel["Freq"])
 @
 
-A continuación, utilizamos data.frame() para todo lo calculado anteriormente, en un tabla y poder presentarlo de forma distinta a los anteriores apartados
+A continuación, utilizamos data.frame() para mostrar todo lo calculado anteriormente, en un tabla, y poder presentarlo de forma distinta a los anteriores apartados:
 <<>>==
 frecuencias <- data.frame(
     frecuencia_absoluta["radio"],
@@ -385,9 +386,8 @@ print(cuartiles)
 
 \section{Conclusiones}
 
-Con esta primera práctica nos hemos iniciado en el lenguaje de programación R, y cómo trabajar en su entorno. Además, se ha hecho uso de \textit{Latex} para generar documentos científicos relacionados con el estudio de datos, empleando la herramienta \textit{Sweavy}.
+Mediante esta pr�ctica, nos hemos introducido al lenguaje de programaci�n R y a algunas de sus herramientas, como es el caso de \textit{Latex}, sistema de preparaci�n de documentos para composici�n de texto de alta calidad o de Sweave, componente de R que permite la integraci�n de c�digo en documentos escritos con \textit{Latex}.
 
-Se ha podido observar que es un lenguaje potente que, en poco tiempo, puede analizar una gran cantidad de datos. También destacar que R cuenta con soporte de la comunidad
-a la hora de crear nuevos paquetes, algoritmos y funcionalidades.
+Con el uso de todas estas herramientas, se ha podido realizar un an�lisis de un conjunto de datos, aplicando los conocimientos vistos en la teor�a (calculo de distintas magnitudes como lo son las frecuancias, la media aritm�tica, o la varianza entre otros).
 
 \end{document}

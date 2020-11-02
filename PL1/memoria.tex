@@ -1,0 +1,570 @@
+\documentclass [a4paper] {article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{Sweave}
+\usepackage{hyperref}
+
+
+\title{PECL1 - Fundamentos de la Ciencia de Datos}
+\author{Mario Adán Herrero \and Alberto González Martínez \and Branimir Stefanov Yanev \and Diego Gutiérrez Marco}
+
+\begin{document}
+\maketitle
+\input{memoria-concordance}
+
+\begin{abstract}
+En el siguiente documento se presentan los resultados y solución de la PECL1 del laboratorio de Fundamentos de la Ciencia de Datos.
+Se realizará un análisis estadístico sobre diferentes datos proporcionados por el profesor y mediante funciones programadas en R se mostrarán los resultados en este pdf utilizando las herramientas Sweave y TinyTex/MikTex.
+
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Introducción} 
+La práctica consta de dos ejercicios, en los cuales se utilizan archivos de datos de diferentes extensiones.\\
+En este primer ejercicio se va a realizar un análisis, utilizando R, de diferentes archivos proporcionados por el profesor, estos archivos son “satelites.txt” y “cardata.sav”, los cuales contienen radios sobre los satélites de Urano (satelites.txt) y datos de automóviles (cardata.sav).\\
+En el segundo ejercicio, los datos del archivo “satelites.txt” se han pasado a formato excel .xlsx y, además, se han utilizado nuevas librería y funciones para hallar las magnitudes.\\
+Para estos dos ejercicios se hallarán las siguientes magnitudes:
+
+\begin{enumerate}
+\item Frecuencias.
+\item Media aritmética.
+\item Varianza.
+\item Desviación típica.
+\item Mediana.
+\item Rango.
+\item Cuartiles.
+\item Cuantil 54.
+\end {enumerate}
+
+\section{Ejercicio 1.1 - Análisis de descripción de datos (satelites.txt)}
+El primer paso a realizar es cargar el archivo de texto que contiene los datos a estudiar y obtener el vector de datos que nos interesa, en este caso el vector radio. A continuación, se muestra el proceso:
+\begin{Schunk}
+\begin{Sinput}
+> # Obtenemos y guardamos el archivo satelites.txt de la carpeta donde está almacenado:
+> satelites <- read.table("./data/satelites.txt")
+> # Accedemos al valor de radio del archivo:
+> radio <- satelites$Radio
+> # Mostramos el valor del vector radio:
+> radio
+\end{Sinput}
+\begin{Soutput}
+ [1] 13 16 22 33 29 42 27 34 20 30 20 15
+\end{Soutput}
+\end{Schunk}
+
+Una vez extraídos los valores de los radios y almacenados en la variable \textit{radio}, realizamos las operaciones que citamos anteriormente.
+
+\subsection{Cálculo de frecuencias}
+A continuación se muestran las fórmulas empleadas y los resultados de calcular las diferentes frecuencias sobre el vector radio obtenido anteriormente.
+
+\subsubsection{Frecuencias absolutas}
+Fórmula y resultado de las frecuencias absolutas:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencia_absoluta <- function(vector)(table(" "=vector))
+> frecuencia_absoluta(radio)
+\end{Sinput}
+\begin{Soutput}
+13 15 16 20 22 27 29 30 33 34 42 
+ 1  1  1  2  1  1  1  1  1  1  1 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Frecuencias absolutas acumuladas}
+Fórmula y resultado de las frecuencias absolutas acumuladas:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencia_absoluta_acumulada <- function(vector)(cumsum(frecuencia_absoluta(vector)))
+> frecuencia_absoluta_acumulada(radio)
+\end{Sinput}
+\begin{Soutput}
+13 15 16 20 22 27 29 30 33 34 42 
+ 1  2  3  5  6  7  8  9 10 11 12 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Frecuencias relativas}
+Fórmula y resultado de las frecuencias relativas:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencia_relativa <- function(vector)(round(frecuencia_absoluta(vector)/length(vector), 4))
+> frecuencia_relativa(radio)
+\end{Sinput}
+\begin{Soutput}
+    13     15     16     20     22     27     29     30     33     34     42 
+0.0833 0.0833 0.0833 0.1667 0.0833 0.0833 0.0833 0.0833 0.0833 0.0833 0.0833 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Frecuencias relativas acumuladas}
+Fórmula y resultado de las frecuencias relativas acumuladas:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencia_relativa_acumulada <- function(vector)(round(frecuencia_absoluta_acumulada(vector)/length(vector), 4))
+> frecuencia_relativa_acumulada(radio)
+\end{Sinput}
+\begin{Soutput}
+    13     15     16     20     22     27     29     30     33     34     42 
+0.0833 0.1667 0.2500 0.4167 0.5000 0.5833 0.6667 0.7500 0.8333 0.9167 1.0000 
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Media Aritmética}
+Mediante la función que nos proporciona R calculamos la media aritmética redondeada a dos decimales. 
+\begin{Schunk}
+\begin{Sinput}
+> media_aritmetica <- function(vector)(round(mean(vector), 2))
+> media_aritmetica(radio)
+\end{Sinput}
+\begin{Soutput}
+[1] 25.08
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Varianza}
+Mediante la función que nos proporciona R calculamos la varianza redondeada a 2 decimales. 
+\begin{Schunk}
+\begin{Sinput}
+> varianza <- function(vector)(round(var(vector), 2))
+> varianza(radio)
+\end{Sinput}
+\begin{Soutput}
+[1] 78.45
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Desviación típica}
+Mediante la función que nos proporciona R calculamos la desviación típica redondeada a 2 decimales.
+\begin{Schunk}
+\begin{Sinput}
+> desviacion_tipica <- function(vector)(round(sd(vector), 2))
+> desviacion_tipica(radio)
+\end{Sinput}
+\begin{Soutput}
+[1] 8.86
+\end{Soutput}
+\end{Schunk}
+
+
+\subsection{Mediana}
+Mediante la función que nos proporciona R calculamos la mediana. 
+\begin{Schunk}
+\begin{Sinput}
+> mediana <- function(vector)(median(vector))
+> mediana(radio)
+\end{Sinput}
+\begin{Soutput}
+[1] 24.5
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Rango}
+Creamos una función para realizar el cálculo del rango sobre el vector radio.
+\begin{Schunk}
+\begin{Sinput}
+> rango <- function(vector)(max(vector)-min(vector))
+> rango(radio)
+\end{Sinput}
+\begin{Soutput}
+[1] 29
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Cuartiles y cuantil 54}
+Mediante la función que nos proporciona R calculamos los cuartiles y el cuantil 54. 
+\subsubsection{Cuartil 1}
+Cálculo del cuartil 1:
+\begin{Schunk}
+\begin{Sinput}
+> quantile(radio, 0.25)
+\end{Sinput}
+\begin{Soutput}
+25% 
+ 19 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Cuartil 2}
+Cálculo del cuartil 2:
+\begin{Schunk}
+\begin{Sinput}
+> quantile(radio, 0.50)
+\end{Sinput}
+\begin{Soutput}
+ 50% 
+24.5 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Cuartil 3}
+Cálculo del cuartil 3:
+\begin{Schunk}
+\begin{Sinput}
+> quantile(radio, 0.75)
+\end{Sinput}
+\begin{Soutput}
+  75% 
+30.75 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Cuartil 4}
+Cálculo del cuartil 4:
+\begin{Schunk}
+\begin{Sinput}
+> quantile(radio, 1.00)
+\end{Sinput}
+\begin{Soutput}
+100% 
+  42 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Cuantil 54}
+Por otro lado, el Cuantil 54
+\begin{Schunk}
+\begin{Sinput}
+> quantile(radio, 0.54)
+\end{Sinput}
+\begin{Soutput}
+ 54% 
+26.7 
+\end{Soutput}
+\end{Schunk}
+
+\section{Ejercicio 1.2 - Análisis de descripción de datos (cardata.sav)}
+
+Fichero Cardata. Mismos valores, salvo Cuantil 54 y frecuencias. Para leer el archivo cardata, al ser .sav necesitamos el paquete "foreign" por lo que utilizamos la función library para cargarla ya que este paquete está instalado por defecto:
+\begin{Schunk}
+\begin{Sinput}
+> # Cargamos las librerias:
+> library(foreign)  # Libreria foreign
+> library(xtable)
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> # Obtenemos y guardamos el archivo cardata.sav de la carpeta donde está almacenado:
+> cardata <-read.spss("./data/cardata.sav")
+> # Sacamos la variable con la que queremos trabajar de la tabla:
+> mpg<-cardata$mpg
+> #como tenemos muchos valores nulos(NA), debemos reasignar mpg para poder trabajar\\ con los datos de forma correcta
+> mpg<-mpg[!is.na(mpg)]
+> #Mostramos los datos
+> mpg
+\end{Sinput}
+\begin{Soutput}
+  [1] 36.1 19.9 19.4 20.2 19.2 20.5 20.2 25.1 20.5 19.4 20.6 20.8 18.6 18.1 19.2
+ [16] 17.7 18.1 17.5 30.0 30.9 23.2 23.8 21.5 19.8 22.3 20.2 20.6 17.0 17.6 16.5
+ [31] 18.2 16.9 15.5 19.2 18.5 35.7 27.4 23.0 23.9 34.2 34.5 28.4 28.8 26.8 33.5
+ [46] 32.1 28.0 26.4 24.3 19.1 27.9 23.6 27.2 26.6 25.8 23.5 30.0 39.0 34.7 34.4
+ [61] 29.9 22.4 26.6 20.2 17.6 28.0 27.0 34.0 31.0 29.0 27.0 24.0 23.0 38.0 36.0
+ [76] 25.0 38.0 26.0 22.0 36.0 27.0 27.0 32.0 28.0 31.0 43.1 20.3 17.0 21.6 16.2
+ [91] 31.5 31.9 25.4 27.2 37.3 41.5 34.3 44.3 43.4 36.4 30.4 40.9 29.8 35.0 33.0
+[106] 34.5 28.1 30.7 36.0 44.0 32.8 39.4 36.1 27.5 27.2 21.1 23.9 29.5 34.1 31.8
+[121] 38.1 37.2 29.8 31.3 37.0 32.2 46.6 40.8 44.6 33.8 32.7 23.7 32.4 39.1 35.1
+[136] 32.3 37.0 37.7 34.1 33.7 32.4 32.9 31.6 25.4 24.2 37.0 31.0 36.0 36.0 34.0
+[151] 38.0 32.0 38.0 32.0
+\end{Soutput}
+\end{Schunk}
+
+Tras esto calculamos las magnitudes calculadas en el los apartados anteriores, pero, en vez de usar el vector radio usamos mpg.
+
+\subsection{Cálculo de frecuencias}
+A continuación se muestran las fórmulas empleadas y los resultados de calcular las diferentes frecuencias sobre el vector radio obtenido anteriormente.
+
+\subsubsection{Frecuencias absolutas}
+Fórmula y resultado de las frecuencias absolutas:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencia_absoluta <- function(vector)(table(" "=vector))
+> frecuencia_absoluta(mpg)
+\end{Sinput}
+\begin{Soutput}
+15.5 16.2 16.5 16.9   17 17.5 17.6 17.7 18.1 18.2 18.5 18.6 19.1 19.2 19.4 19.8 
+   1    1    1    1    2    1    2    1    2    1    1    1    1    3    2    1 
+19.9 20.2 20.3 20.5 20.6 20.8 21.1 21.5 21.6   22 22.3 22.4   23 23.2 23.5 23.6 
+   1    4    1    2    2    1    1    1    1    1    1    1    2    1    1    1 
+23.7 23.8 23.9   24 24.2 24.3   25 25.1 25.4 25.8   26 26.4 26.6 26.8   27 27.2 
+   1    1    2    1    1    1    1    1    2    1    1    1    2    1    4    3 
+27.4 27.5 27.9   28 28.1 28.4 28.8   29 29.5 29.8 29.9   30 30.4 30.7 30.9   31 
+   1    1    1    3    1    1    1    1    1    2    1    2    1    1    1    3 
+31.3 31.5 31.6 31.8 31.9   32 32.1 32.2 32.3 32.4 32.7 32.8 32.9   33 33.5 33.7 
+   1    1    1    1    1    3    1    1    1    2    1    1    1    1    1    1 
+33.8   34 34.1 34.2 34.3 34.4 34.5 34.7   35 35.1 35.7   36 36.1 36.4   37 37.2 
+   1    2    2    1    1    1    2    1    1    1    1    5    2    1    3    1 
+37.3 37.7   38 38.1   39 39.1 39.4 40.8 40.9 41.5 43.1 43.4   44 44.3 44.6 46.6 
+   1    1    4    1    1    1    1    1    1    1    1    1    1    1    1    1 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Frecuencias absolutas acumuladas}
+Fórmula y resultado de las frecuencias absolutas acumuladas:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencia_absoluta_acumulada <- function(vector)(cumsum(frecuencia_absoluta(vector)))
+> frecuencia_absoluta_acumulada(mpg)
+\end{Sinput}
+\begin{Soutput}
+15.5 16.2 16.5 16.9   17 17.5 17.6 17.7 18.1 18.2 18.5 18.6 19.1 19.2 19.4 19.8 
+   1    2    3    4    6    7    9   10   12   13   14   15   16   19   21   22 
+19.9 20.2 20.3 20.5 20.6 20.8 21.1 21.5 21.6   22 22.3 22.4   23 23.2 23.5 23.6 
+  23   27   28   30   32   33   34   35   36   37   38   39   41   42   43   44 
+23.7 23.8 23.9   24 24.2 24.3   25 25.1 25.4 25.8   26 26.4 26.6 26.8   27 27.2 
+  45   46   48   49   50   51   52   53   55   56   57   58   60   61   65   68 
+27.4 27.5 27.9   28 28.1 28.4 28.8   29 29.5 29.8 29.9   30 30.4 30.7 30.9   31 
+  69   70   71   74   75   76   77   78   79   81   82   84   85   86   87   90 
+31.3 31.5 31.6 31.8 31.9   32 32.1 32.2 32.3 32.4 32.7 32.8 32.9   33 33.5 33.7 
+  91   92   93   94   95   98   99  100  101  103  104  105  106  107  108  109 
+33.8   34 34.1 34.2 34.3 34.4 34.5 34.7   35 35.1 35.7   36 36.1 36.4   37 37.2 
+ 110  112  114  115  116  117  119  120  121  122  123  128  130  131  134  135 
+37.3 37.7   38 38.1   39 39.1 39.4 40.8 40.9 41.5 43.1 43.4   44 44.3 44.6 46.6 
+ 136  137  141  142  143  144  145  146  147  148  149  150  151  152  153  154 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Frecuencias relativas}
+Fórmula y resultado de las frecuencias relativas:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencia_relativa <- function(vector)(round(frecuencia_absoluta(vector)/length(vector), 4))
+> frecuencia_relativa(mpg)
+\end{Sinput}
+\begin{Soutput}
+  15.5   16.2   16.5   16.9     17   17.5   17.6   17.7   18.1   18.2   18.5 
+0.0065 0.0065 0.0065 0.0065 0.0130 0.0065 0.0130 0.0065 0.0130 0.0065 0.0065 
+  18.6   19.1   19.2   19.4   19.8   19.9   20.2   20.3   20.5   20.6   20.8 
+0.0065 0.0065 0.0195 0.0130 0.0065 0.0065 0.0260 0.0065 0.0130 0.0130 0.0065 
+  21.1   21.5   21.6     22   22.3   22.4     23   23.2   23.5   23.6   23.7 
+0.0065 0.0065 0.0065 0.0065 0.0065 0.0065 0.0130 0.0065 0.0065 0.0065 0.0065 
+  23.8   23.9     24   24.2   24.3     25   25.1   25.4   25.8     26   26.4 
+0.0065 0.0130 0.0065 0.0065 0.0065 0.0065 0.0065 0.0130 0.0065 0.0065 0.0065 
+  26.6   26.8     27   27.2   27.4   27.5   27.9     28   28.1   28.4   28.8 
+0.0130 0.0065 0.0260 0.0195 0.0065 0.0065 0.0065 0.0195 0.0065 0.0065 0.0065 
+    29   29.5   29.8   29.9     30   30.4   30.7   30.9     31   31.3   31.5 
+0.0065 0.0065 0.0130 0.0065 0.0130 0.0065 0.0065 0.0065 0.0195 0.0065 0.0065 
+  31.6   31.8   31.9     32   32.1   32.2   32.3   32.4   32.7   32.8   32.9 
+0.0065 0.0065 0.0065 0.0195 0.0065 0.0065 0.0065 0.0130 0.0065 0.0065 0.0065 
+    33   33.5   33.7   33.8     34   34.1   34.2   34.3   34.4   34.5   34.7 
+0.0065 0.0065 0.0065 0.0065 0.0130 0.0130 0.0065 0.0065 0.0065 0.0130 0.0065 
+    35   35.1   35.7     36   36.1   36.4     37   37.2   37.3   37.7     38 
+0.0065 0.0065 0.0065 0.0325 0.0130 0.0065 0.0195 0.0065 0.0065 0.0065 0.0260 
+  38.1     39   39.1   39.4   40.8   40.9   41.5   43.1   43.4     44   44.3 
+0.0065 0.0065 0.0065 0.0065 0.0065 0.0065 0.0065 0.0065 0.0065 0.0065 0.0065 
+  44.6   46.6 
+0.0065 0.0065 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Frecuencias relativas acumuladas}
+Fórmula y resultado de las frecuencias relativas acumuladas:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencia_relativa_acumulada <- function(vector)
++     (round(frecuencia_absoluta_acumulada(vector)/length(vector), 4))
+> frecuencia_relativa_acumulada(mpg)
+\end{Sinput}
+\begin{Soutput}
+  15.5   16.2   16.5   16.9     17   17.5   17.6   17.7   18.1   18.2   18.5 
+0.0065 0.0130 0.0195 0.0260 0.0390 0.0455 0.0584 0.0649 0.0779 0.0844 0.0909 
+  18.6   19.1   19.2   19.4   19.8   19.9   20.2   20.3   20.5   20.6   20.8 
+0.0974 0.1039 0.1234 0.1364 0.1429 0.1494 0.1753 0.1818 0.1948 0.2078 0.2143 
+  21.1   21.5   21.6     22   22.3   22.4     23   23.2   23.5   23.6   23.7 
+0.2208 0.2273 0.2338 0.2403 0.2468 0.2532 0.2662 0.2727 0.2792 0.2857 0.2922 
+  23.8   23.9     24   24.2   24.3     25   25.1   25.4   25.8     26   26.4 
+0.2987 0.3117 0.3182 0.3247 0.3312 0.3377 0.3442 0.3571 0.3636 0.3701 0.3766 
+  26.6   26.8     27   27.2   27.4   27.5   27.9     28   28.1   28.4   28.8 
+0.3896 0.3961 0.4221 0.4416 0.4481 0.4545 0.4610 0.4805 0.4870 0.4935 0.5000 
+    29   29.5   29.8   29.9     30   30.4   30.7   30.9     31   31.3   31.5 
+0.5065 0.5130 0.5260 0.5325 0.5455 0.5519 0.5584 0.5649 0.5844 0.5909 0.5974 
+  31.6   31.8   31.9     32   32.1   32.2   32.3   32.4   32.7   32.8   32.9 
+0.6039 0.6104 0.6169 0.6364 0.6429 0.6494 0.6558 0.6688 0.6753 0.6818 0.6883 
+    33   33.5   33.7   33.8     34   34.1   34.2   34.3   34.4   34.5   34.7 
+0.6948 0.7013 0.7078 0.7143 0.7273 0.7403 0.7468 0.7532 0.7597 0.7727 0.7792 
+    35   35.1   35.7     36   36.1   36.4     37   37.2   37.3   37.7     38 
+0.7857 0.7922 0.7987 0.8312 0.8442 0.8506 0.8701 0.8766 0.8831 0.8896 0.9156 
+  38.1     39   39.1   39.4   40.8   40.9   41.5   43.1   43.4     44   44.3 
+0.9221 0.9286 0.9351 0.9416 0.9481 0.9545 0.9610 0.9675 0.9740 0.9805 0.9870 
+  44.6   46.6 
+0.9935 1.0000 
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Media Aritmética}
+Mediante la función que nos proporciona R calculamos la media aritmética redondeada a dos decimales. 
+\begin{Schunk}
+\begin{Sinput}
+> media_aritmetica <- function(vector)(round(mean(vector), 2))
+> media_aritmetica(mpg)
+\end{Sinput}
+\begin{Soutput}
+[1] 28.79
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Varianza}
+Mediante la función que nos proporciona R calculamos la varianza redondeada a 2 decimales. 
+\begin{Schunk}
+\begin{Sinput}
+> varianza <- function(vector)(round(var(vector), 2))
+> varianza(mpg)
+\end{Sinput}
+\begin{Soutput}
+[1] 54.42
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Desviación típica}
+Mediante la función que nos proporciona R calculamos la desviación típica redondeada a 2 decimales.
+\begin{Schunk}
+\begin{Sinput}
+> desviacion_tipica <- function(vector)(round(sd(vector), 2))
+> desviacion_tipica(mpg)
+\end{Sinput}
+\begin{Soutput}
+[1] 7.38
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Mediana}
+Mediante la función que nos proporciona R calculamos la mediana. 
+\begin{Schunk}
+\begin{Sinput}
+> mediana <- function(vector)(median(vector))
+> mediana(mpg)
+\end{Sinput}
+\begin{Soutput}
+[1] 28.9
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Rango}
+Creamos una función para realizar el cálculo del rango sobre el vector radio.
+\begin{Schunk}
+\begin{Sinput}
+> rango <- function(vector)(max(vector)-min(vector))
+> rango(mpg)
+\end{Sinput}
+\begin{Soutput}
+[1] 31.1
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Cuartiles y cuantil 54}
+Mediante la función que nos proporciona R calculamos los cuartiles y el cuantil 54. 
+\subsubsection{Cuartil 1}
+Cálculo del cuartil 1:
+\begin{Schunk}
+\begin{Sinput}
+> quantile(mpg, 0.25)
+\end{Sinput}
+\begin{Soutput}
+  25% 
+22.55 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Cuartil 2}
+Cálculo del cuartil 2:
+\begin{Schunk}
+\begin{Sinput}
+> quantile(mpg, 0.50)
+\end{Sinput}
+\begin{Soutput}
+ 50% 
+28.9 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Cuartil 3}
+Cálculo del cuartil 3:
+\begin{Schunk}
+\begin{Sinput}
+> quantile(mpg, 0.75)
+\end{Sinput}
+\begin{Soutput}
+   75% 
+34.275 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Cuartil 4}
+Cálculo del cuartil 4:
+\begin{Schunk}
+\begin{Sinput}
+> quantile(mpg, 1.00)
+\end{Sinput}
+\begin{Soutput}
+100% 
+46.6 
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Cuantil 54}
+Por otro lado, el Cuantil 54
+\begin{Schunk}
+\begin{Sinput}
+> quantile(mpg, 0.54)
+\end{Sinput}
+\begin{Soutput}
+54% 
+ 30 
+\end{Soutput}
+\end{Schunk}
+
+\section{Ejercicio 2 -  Análisis con R de fichero excel (satelites.xls} 
+En el ejercicio 2 se van a calcular las mismas magnitudes que se hallaron en el ejercicio 1, pero en este caso, se utilizarán nuevas funciones y librerías. Además el archivo de donde se leen los datos será un .xlsx.\\
+Para utilizar nuevas funciones se han instalado los siguientes paquetes; textit{xlsx} y \textit{pastecs}. Estos paquetes se han instalado de la siguiente forma:
+
+\begin{verbatim}
+install.packages("pastecs")
+install.packages("xlsx")
+\end{verbatim}
+
+Tras esto, se ha procedido a leer los datos:
+
+\begin{Schunk}
+\begin{Sinput}
+> # Cargamos la libreria:
+> library(xlsx)
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> # Obtenemos y guardamos el archivo "satelites.xlsx" de la carpeta donde está almacenado:
+> satelites <- read.xlsx("./data/satelites.xlsx", 1)
+> # Sacamos la variable con la que queremos trabajar de la tabla:
+> radio <- satelites$radio
+\end{Sinput}
+\end{Schunk}
+
+\subsection{Uso de data, frame, y table}
+
+
+Una vez leídos, se ha utilizado \textit{table()} para calcular las frecuencias absolutas y \textit{prop.table()} para el cálculo de las frecuencias
+relativas. Usamos \textit{data.frame()} para manipular las tablas usando nombres de columna y para mostrarlo en una sola tabla con nombres.
+
+\subsection{Cálculo de frecuencias}
+A continuación se muestran las fórmulas empleadas y los resultados de las diferentes frecuencias expresados en una tabla.
+
+\subsubsection{Frecuencias absolutas}
+Fórmula de las frecuencias absolutas:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencia_absoluta <- data.frame(table(radio))
+\end{Sinput}
+\end{Schunk}
+
+\subsubsection{Frecuencias absolutas acumuladas}
+Fórmula de las frecuencias absolutas acumuladas:
+\begin{Schunk}
+\begin{Sinput}
+> frecuencia_absoluta_acumulada <- cumsum(frecAbs["Freq"])
