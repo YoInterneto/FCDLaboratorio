@@ -1,0 +1,48 @@
+\documentclass [a4paper] {article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{Sweave}
+\usepackage{hyperref}
+
+
+\title{PECL2 - Fundamentos de la ciencia de datos}
+\author{Mario Adán Herrero \and Alberto González Martínez \and Branimir Stefanov Yanev \and Diego Gutiérrez Marco}
+
+\begin{document}
+\maketitle
+\SweaveOpts{concordance=TRUE, cache=TRUE}
+
+\begin{abstract}
+En el siguiente documento se presentan los resultados y solución de la PECL2 del laboratorio de Fundamentos de la Ciencia de Datos.
+Se realizará un análisis de asociación de datos siguiendo el ejercicio realizado en teoría. Utilizaremos el algoritmo Apriori y obtendremos aquellas asociaciones cuyo soporte sea mayor o igual que 50% y cuya confianza sea mayor o igual que 80%. Se mostrarán los resultados en este pdf utilizando las herramientas Sweave y TinyTex/MikTex.
+
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Introducción} 
+La práctica consta de dos partes:\\
+En la primera parte se va a realizar un análisis, utilizando R, \\
+En el segundo ejercicio, los datos del archivo “satelites.txt”, se han pasado a formato excel .xlsx, además se utilizarán nuevas librería y funciones para hallar las magnitudes.\\
+Para estos dos ejercicios se hallarán las siguientes magnitudes:
+
+
+
+
+
+
+
+
+\section{Conclusiones}
+
+Con esta primera práctica nos hemos iniciado en el lenguaje de programación R, y cómo trabajar en su entorno. Además, se ha hecho uso de \textit{Latex} para generar documentos científicos relacionados con el estudio de datos, empleando la herramienta \textit{Sweavy}.
+
+Se ha podido observar que es un lenguaje potente que, en poco tiempo, puede analizar una gran cantidad de datos. También destacar que R cuenta con soporte de la comunidad
+a la hora de crear nuevos paquetes, algoritmos y funcionalidades.
+
+\end{document}
