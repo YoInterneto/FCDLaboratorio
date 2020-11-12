@@ -1,0 +1,335 @@
+\documentclass [a4paper] {article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{Sweave}
+\usepackage{hyperref}
+
+
+\title{PECL2 - Fundamentos de la ciencia de datos}
+\author{Mario Adán Herrero \and Alberto González Martínez \and Branimir Stefanov Yanev \and Diego Gutiérrez Marco}
+
+\begin{document}
+\maketitle
+\input{memoria-concordance}
+
+\begin{abstract}
+En el siguiente documento se presentan los resultados y solución de la PECL2 del laboratorio de Fundamentos de la Ciencia de Datos.
+Se realizará un análisis de asociación de datos siguiendo el ejercicio realizado en teoría. Utilizaremos el algoritmo Apriori y obtendremos aquellas asociaciones cuyo soporte sea mayor o igual que 50\% y cuya confianza sea mayor o igual que 80\%. Se mostrarán los resultados en este pdf utilizando las herramientas Sweave y TinyTex/MikTex.
+
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Introducción} 
+La práctica consta de dos partes:
+
+En la primera parte, se va a realizar un análisis de asociación, utilizando R, aplicando conceptos vistos en la teoría y haciendo uso del algoritmo Apriori, se resolverá el mismo problema visto en teoría.
+
+En la segunda parte, el grupo desarrollará un enunciado, y su posterior solución, de un ejercicio que contenga modificaciones del ejercicio hecho en clase, en el que se realice un análisis de asociación con R.
+
+
+\section{Ejercicio 1- Análisis de asociación. Cesta de la compra}
+Para resolver este ejercicio haremos uso del paquete “arules”. Este paquete de R nos proporciona las funciones necesarias para realizar nuestro análisis de asociación.
+
+En este caso en particular analizaremos las compras de varios usuarios para concluir qué productos son comprados juntos habitualmente.
+
+El objetivo es obtener las asociaciones cuyo soporte sea igual o superior al 50\% y cuya confianza sea igual o superior al 80\%.
+
+\subsection{Elementos}
+Los distintos productos que podemos comprar son los siguientes.
+\begin{enumerate}
+\item Pan
+\item Agua
+\item Café
+\item Leche
+\item Naranjas
+\end{enumerate}
+
+\subsection{Sucesos}
+Los usuarios han realizado las siguientes compras.
+\begin{enumerate}
+\item {Pan, Agua, Leche, Naranjas}
+\item {Pan, Agua, Café, Leche}
+\item {Pan, Agua, Leche}
+\item {Pan, Café, Leche}
+\item {Pan, Agua}
+\item {Leche}
+\end{enumerate}
+
+\subsection{Paquete Arules}
+Primero, debemos cargar la librería \emph{arules} que contiene las funciones necesarias para nuestro análisis de asociación con el algoritmo Apriori.\\
+
+\begin{Schunk}
+\begin{Sinput}
+> library("arules")
+\end{Sinput}
+\end{Schunk}
+
+\subsection{Matriz de asociaciones}
+Tras esto, cargamos nuestra matriz de asociaciones, que contiene la información de las compras realizadas.
+
+\begin{Schunk}
+\begin{Sinput}
+> muestra<- Matrix(
++     c(1,1,0,1,1,1,1,1,1,0,1,1,0,1,0,1,0,1,1,0,1,1,0,0,0,0,0,0,1,0),
++     6, 5, byrow=T, dimnames=list(
++         c("compra1","compra2","compra3","compra4","compra5","compra6"),
++         c("Pan","Agua","Cafe","Leche","Naranjas")),
++     sparse=T)
+> #Imprimimos la matriz
+> muestra
+\end{Sinput}
+\begin{Soutput}
+6 x 5 sparse Matrix of class "dgCMatrix"
+        Pan Agua Cafe Leche Naranjas
+compra1   1    1    .     1        1
+compra2   1    1    1     1        .
+compra3   1    1    .     1        .
+compra4   1    .    1     1        .
+compra5   1    1    .     .        .
+compra6   .    .    .     1        .
+\end{Soutput}
+\end{Schunk}
+
+Para emplear el algoritmo Apriori, primero convertimos la matriz a un objeto de transacciones a través de una matriz dispersa.
+
+\begin{Schunk}
+\begin{Sinput}
+> #Matriz dispersa
+> muestrangC <- as(muestra,"nsparseMatrix")
+> muestrangC
+\end{Sinput}
+\begin{Soutput}
+6 x 5 sparse Matrix of class "ngCMatrix"
+        Pan Agua Cafe Leche Naranjas
+compra1   |    |    .     |        |
+compra2   |    |    |     |        .
+compra3   |    |    .     |        .
+compra4   |    .    |     |        .
+compra5   |    |    .     .        .
+compra6   .    .    .     |        .
+\end{Soutput}
+\begin{Sinput}
+> #Matriz transpuesta
+> muestrangC_transpuesta <- t(muestrangC)
+> muestrangC_transpuesta
+\end{Sinput}
+\begin{Soutput}
+5 x 6 sparse Matrix of class "ngCMatrix"
+         compra1 compra2 compra3 compra4 compra5 compra6
+Pan            |       |       |       |       |       .
+Agua           |       |       |       .       |       .
+Cafe           .       |       .       |       .       .
+Leche          |       |       |       |       .       |
+Naranjas       |       .       .       .       .       .
+\end{Soutput}
+\begin{Sinput}
+> #Transacciones
+> transacciones <- as(muestrangC_transpuesta  , "transactions")
+> transacciones
+\end{Sinput}
+\begin{Soutput}
+transactions in sparse format with
+ 6 transactions (rows) and
+ 5 items (columns)
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Análisis de asociación}
+Aplicamos ahora el algoritmo Apriori con soporte mayor o igual al 50\% y confianza mayor o igual al 80\%, y mostramos el resultado por pantalla para ver qué asociaciones cumplen este criterio. 
+
+\begin{Schunk}
+\begin{Sinput}
+> asociaciones <- apriori(transacciones, parameter=list(support=0.5, confidence=0.8))
+\end{Sinput}
+\begin{Soutput}
+Apriori
+
+Parameter specification:
+ confidence minval smax arem  aval originalSupport maxtime support minlen
+        0.8    0.1    1 none FALSE            TRUE       5     0.5      1
+ maxlen target  ext
+     10  rules TRUE
+
+Algorithmic control:
+ filter tree heap memopt load sort verbose
+    0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+
+Absolute minimum support count: 3 
+
+set item appearances ...[0 item(s)] done [0.00s].
+set transactions ...[5 item(s), 6 transaction(s)] done [0.00s].
+sorting and recoding items ... [3 item(s)] done [0.00s].
+creating transaction tree ... done [0.00s].
+checking subsets of size 1 2 3 done [0.00s].
+writing ... [7 rule(s)] done [0.00s].
+creating S4 object  ... done [0.00s].
+\end{Soutput}
+\begin{Sinput}
+> inspect(asociaciones)
+\end{Sinput}
+\begin{Soutput}
+    lhs             rhs     support   confidence coverage  lift count
+[1] {}           => {Leche} 0.8333333 0.8333333  1.0000000 1.00 5    
+[2] {}           => {Pan}   0.8333333 0.8333333  1.0000000 1.00 5    
+[3] {Agua}       => {Pan}   0.6666667 1.0000000  0.6666667 1.20 4    
+[4] {Pan}        => {Agua}  0.6666667 0.8000000  0.8333333 1.20 4    
+[5] {Leche}      => {Pan}   0.6666667 0.8000000  0.8333333 0.96 4    
+[6] {Pan}        => {Leche} 0.6666667 0.8000000  0.8333333 0.96 4    
+[7] {Agua,Leche} => {Pan}   0.5000000 1.0000000  0.5000000 1.20 3    
+\end{Soutput}
+\end{Schunk}
+
+
+\section{Ejercicio 2- Análisis de asociación. Componentes}
+Para el segundo ejercicio, procederemos de igual manera que anteriormente, pero aplicando los cambios necesarios para la modificación del ejercicio.
+
+En este caso, nos pondremos en el lugar de una tienda de ordenadores por lo que se desea estudiar las asociaciones entre las ventas de sus productos para poder elaborar paquetes de oferta.
+
+
+\subsection{Productos}
+Los productos son los siguientes:
+
+\subsection{Elementos}
+\begin{enumerate}
+\item Periféricos
+\item Tarjeta gráfica
+\item Monitor
+\item Disco duro
+\item Procesador
+\item Placas base
+\item Ventiladores
+\end{enumerate}
+
+\subsection{Paquete Arules}
+
+Posteriormente, para comenzar importamos de nuevo \emph{arules}.
+
+\begin{Schunk}
+\begin{Sinput}
+> library(arules)
+\end{Sinput}
+\end{Schunk}
+
+\subsection{Lectura de datos}
+Cargamos los datos del csv en una variable que llamaremos “datos”.
+\begin{Schunk}
+\begin{Sinput}
+> datos <- scan("./data/componentes.csv", sep=",")
+> #MATRIZ DATOS
+> 
+> matriz_datos <- Matrix(datos, 
++ ncol=7, 
++ nrow=5, 
++ byrow=T,
++ sparse=T,
++ dimnames=list(c(1:5), c("Perifericos",
++         "Tarjeta Grafica", 
++         "Monitor",
++         "Disco duro", 
++         "Procesador", 
++         "Placas base",
++         "Ventiladores")))
+> print(matriz_datos)
+\end{Sinput}
+\begin{Soutput}
+5 x 7 sparse Matrix of class "dgCMatrix"
+  Perifericos Tarjeta Grafica Monitor Disco duro Procesador Placas base
+1           1               1       .          1          .           1
+2           1               .       1          1          1           1
+3           1               1       1          .          1           .
+4           .               1       .          1          1           1
+5           1               1       1          1          .           1
+  Ventiladores
+1            1
+2            .
+3            1
+4            1
+5            .
+\end{Soutput}
+\end{Schunk}
+
+Observamos la matriz generada.
+
+
+\subsection{Analisis de asociacion}
+Convertimos nuestra matriz en una matriz dispersa para poder aplicarle el algoritmo Apriori a los datos que tenemos, con un soporte mayor o igual a 60\% y una confianza mayor o igual a 80\%.
+
+Mostramos las asociaciones entre los distintos datos.
+
+
+\begin{Schunk}
+\begin{Sinput}
+> asociaciones <- apriori(
++     as(t(as(matriz_datos,"nsparseMatrix")), "transactions"),
++     parameter=list(support=0.6,confidence=0.8))
+\end{Sinput}
+\begin{Soutput}
+Apriori
+
+Parameter specification:
+ confidence minval smax arem  aval originalSupport maxtime support minlen
+        0.8    0.1    1 none FALSE            TRUE       5     0.6      1
+ maxlen target  ext
+     10  rules TRUE
+
+Algorithmic control:
+ filter tree heap memopt load sort verbose
+    0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+
+Absolute minimum support count: 3 
+
+set item appearances ...[0 item(s)] done [0.00s].
+set transactions ...[7 item(s), 5 transaction(s)] done [0.00s].
+sorting and recoding items ... [7 item(s)] done [0.00s].
+creating transaction tree ... done [0.00s].
+checking subsets of size 1 2 3 done [0.00s].
+writing ... [12 rule(s)] done [0.00s].
+creating S4 object  ... done [0.00s].
+\end{Soutput}
+\begin{Sinput}
+> inspect(asociaciones)
+\end{Sinput}
+\begin{Soutput}
+     lhs                              rhs               support confidence
+[1]  {}                            => {Tarjeta Grafica} 0.8     0.8       
+[2]  {}                            => {Disco duro}      0.8     0.8       
+[3]  {}                            => {Placas base}     0.8     0.8       
+[4]  {}                            => {Perifericos}     0.8     0.8       
+[5]  {Ventiladores}                => {Tarjeta Grafica} 0.6     1.0       
+[6]  {Monitor}                     => {Perifericos}     0.6     1.0       
+[7]  {Disco duro}                  => {Placas base}     0.8     1.0       
+[8]  {Placas base}                 => {Disco duro}      0.8     1.0       
+[9]  {Tarjeta Grafica,Disco duro}  => {Placas base}     0.6     1.0       
+[10] {Tarjeta Grafica,Placas base} => {Disco duro}      0.6     1.0       
+[11] {Perifericos,Disco duro}      => {Placas base}     0.6     1.0       
+[12] {Perifericos,Placas base}     => {Disco duro}      0.6     1.0       
+     coverage lift count
+[1]  1.0      1.00 4    
+[2]  1.0      1.00 4    
+[3]  1.0      1.00 4    
+[4]  1.0      1.00 4    
+[5]  0.6      1.25 3    
+[6]  0.6      1.25 3    
+[7]  0.8      1.25 4    
+[8]  0.8      1.25 4    
+[9]  0.6      1.25 3    
+[10] 0.6      1.25 3    
+[11] 0.6      1.25 3    
+[12] 0.6      1.25 3    
+\end{Soutput}
+\end{Schunk}
+
+
+\section{Conclusiones}
+
+Hemos realizado un análisis de asociación de datos con R, usando el algoritmo Apriori proporcionado por el paquete \emph{arules}. 
+
+
+\end{document}
+

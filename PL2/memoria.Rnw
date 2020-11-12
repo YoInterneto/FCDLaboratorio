@@ -126,7 +126,7 @@ Los productos son los siguientes:
 \item Ventiladores
 \end{enumerate}
 
-
+\subsection{Paquete Arules}
 
 Posteriormente, para comenzar importamos de nuevo \emph{arules}.
 
@@ -134,24 +134,45 @@ Posteriormente, para comenzar importamos de nuevo \emph{arules}.
 library(arules)
 @
 
+\subsection{Lectura de datos}
 Cargamos los datos del csv en una variable que llamaremos “datos”.
 <<>>=
-datos <- read.csv("./data/componentes.csv", sep=";")
-matriz_datos <- as.matrix(datos)
+datos <- scan("./data/componentes.csv", sep=",")
 #MATRIZ DATOS
-matriz_datos
 
-matriz_datos <- Matrix(datos, 7, 7, byrow=T,
-dimnames=list(c(suceso1”,“suceso2”,“suceso3”,“suceso4”,“suceso5”,“suceso6”,“suceso7”,), c(“Perifericos”,”Tarjeta Grafica”, “Monitor”, “Disco duro”, “Procesador”, “Placas base”,”Ventiladores”)),
-sparse=T)
+matriz_datos <- Matrix(datos, 
+ncol=7, 
+nrow=5, 
+byrow=T,
+sparse=T,
+dimnames=list(c(1:5), c("Perifericos",
+        "Tarjeta Grafica", 
+        "Monitor",
+        "Disco duro", 
+        "Procesador", 
+        "Placas base",
+        "Ventiladores")))
 
 print(matriz_datos)
 @
 
 Observamos la matriz generada.
+
+
+\subsection{Analisis de asociacion}
 Convertimos nuestra matriz en una matriz dispersa para poder aplicarle el algoritmo Apriori a los datos que tenemos, con un soporte mayor o igual a 60\% y una confianza mayor o igual a 80\%.
 
 Mostramos las asociaciones entre los distintos datos.
+
+
+<<>>=
+asociaciones <- apriori(
+    as(t(as(matriz_datos,"nsparseMatrix")), "transactions"),
+    parameter=list(support=0.6,confidence=0.8))
+
+inspect(asociaciones)
+@
+
 
 \section{Conclusiones}
 
@@ -159,3 +180,4 @@ Hemos realizado un análisis de asociación de datos con R, usando el algoritmo 
 
 
 \end{document}
+
