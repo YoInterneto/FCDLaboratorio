@@ -187,7 +187,7 @@ creating S4 object  ... done [0.00s].
 
 
 \section{Ejercicio 2- Análisis de asociación. Componentes}
-Para el segundo ejercicio, procederemos de igual manera que anteriormente, pero aplicando los cambios necesarios para la modificación del ejercicio.
+Para el segundo ejercicio, realizaremos un análisis de asociación con Arules para cun conjunto de datos que leeros a través de un archivo CSV.
 
 En este caso, nos pondremos en el lugar de una tienda de ordenadores por lo que se desea estudiar las asociaciones entre las ventas de sus productos para poder elaborar paquetes de oferta.
 
@@ -208,7 +208,7 @@ Los productos son los siguientes:
 
 \subsection{Paquete Arules}
 
-Posteriormente, para comenzar importamos de nuevo \emph{arules}.
+Importamos de nuevo el paquete \emph{arules} para el análisis Apriori.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -217,7 +217,7 @@ Posteriormente, para comenzar importamos de nuevo \emph{arules}.
 \end{Schunk}
 
 \subsection{Lectura de datos}
-Cargamos los datos del csv en una variable que llamaremos “datos”.
+Cargamos los datos del csv en una variable que llamaremos “datos”. Para ello utilizamos la función "scan".
 \begin{Schunk}
 \begin{Sinput}
 > datos <- scan("./data/componentes.csv", sep=",")
@@ -254,14 +254,11 @@ Cargamos los datos del csv en una variable que llamaremos “datos”.
 \end{Soutput}
 \end{Schunk}
 
-Observamos la matriz generada.
+Observamos la matriz generada a partir de los datos del csv.
 
 
 \subsection{Analisis de asociacion}
 Convertimos nuestra matriz en una matriz dispersa para poder aplicarle el algoritmo Apriori a los datos que tenemos, con un soporte mayor o igual a 60\% y una confianza mayor o igual a 80\%.
-
-Mostramos las asociaciones entre los distintos datos.
-
 
 \begin{Schunk}
 \begin{Sinput}
@@ -325,10 +322,11 @@ creating S4 object  ... done [0.00s].
 \end{Soutput}
 \end{Schunk}
 
+Mostramos las asociaciones de productos que cumplen los umbrales de soporte y de confianza establecidos.
 
 \section{Conclusiones}
 
-Hemos realizado un análisis de asociación de datos con R, usando el algoritmo Apriori proporcionado por el paquete \emph{arules}. 
+Hemos realizado un análisis de asociación de datos con R, usando el algoritmo Apriori proporcionado por el paquete \emph{arules}. Para el ejercicio 2 hemos propuesto un análisis de asociación para un conjunto de datos que leemos mediante un archivo CSV para los cuáles calcularemos las asociaciones con soporte 60\% y confianza 80\%.
 
 
 \end{document}
