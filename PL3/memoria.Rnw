@@ -1,0 +1,66 @@
+\documentclass [a4paper] {article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{Sweave}
+\usepackage{hyperref}
+
+
+\title{PECL2 - Fundamentos de la ciencia de datos}
+\author{Mario Adán Herrero \and Alberto González Martínez \and Branimir Stefanov Yanev \and Diego Gutiérrez Marco}
+
+\begin{document}
+\maketitle
+\SweaveOpts{concordance=TRUE, cache=TRUE}
+
+\begin{abstract}
+En el siguiente documento se presentan los resultados y solución de la PECL2 del laboratorio de Fundamentos de la Ciencia de Datos.
+Se realizará un análisis de asociación de datos siguiendo el ejercicio realizado en teoría. Utilizaremos el algoritmo Apriori y obtendremos aquellas asociaciones cuyo soporte sea mayor o igual que 50\% y cuya confianza sea mayor o igual que 80\%. Se mostrarán los resultados en este pdf utilizando las herramientas Sweave y TinyTex/MikTex.
+
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Introducción} 
+La práctica consta de dos partes:
+
+En la primera parte, se va a realizar un análisis de asociación, utilizando R, aplicando conceptos vistos en la teoría y haciendo uso del algoritmo Apriori, se resolverá el mismo problema visto en teoría.
+
+En la segunda parte, el grupo desarrollará un enunciado, y su posterior solución, de un ejercicio que contenga modificaciones del ejercicio hecho en clase, en el que se realice un análisis de asociación con R.
+
+
+\section{Ejercicio 1- Análisis de asociación. Cesta de la compra}
+Para resolver este ejercicio haremos uso del paquete “arules”. Este paquete de R nos proporciona las funciones necesarias para realizar nuestro análisis de asociación.
+
+En este caso en particular analizaremos las compras de varios usuarios para concluir qué productos son comprados juntos habitualmente.
+
+El objetivo es obtener las asociaciones cuyo soporte sea igual o superior al 50\% y cuya confianza sea igual o superior al 80\%.
+
+\section{Apartado 1 - Analisis de clasificacion supervisada}
+
+\subsubsection{arboles de decision}
+
+Se pide, para las siguientes calificaciones de la tabla \ref{tab:tabla-calificaciones}, obtener una funci�n de clasificaci�n, utilizando como medida de impureza el Gini a la hora de realizarla.
+
+\begin{table}[!htbp]
+\centering
+\caption{Muestra de calificaciones: }
+\label{tab:tabla-calificaciones}
+\begin{tabular}{llll}
+A & A & B & Ap \\
+A & B & D & Ss \\
+D & D & C & Ss \\
+D & D & A & Ss \\
+B & C & B & Ss \\
+C & B & B & Ap \\
+B & B & A & Ap \\
+C & D & C & Ss \\
+B & A & C & Ss
+\end{tabular}
+\end{table}
+
+Para realizar el an�lisis, el primer paso es cargar las librer�as de \textit{rpart} y \textit{tree}. 
