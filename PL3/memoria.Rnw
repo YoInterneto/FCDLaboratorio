@@ -34,7 +34,7 @@ En la primera parte, se va a realizar un análisis de asociación, utilizando R,
 En la segunda parte, el grupo desarrollará un enunciado, y su posterior solución, de un ejercicio que contenga modificaciones del ejercicio hecho en clase, en el que se realice un análisis de asociación con R.
 
 
-\section{Ejercicio 1- Análisis de clasificación de datos.} 
+\section{Ejercicio 1- Análisis de clasificación de datos. Calificaciones - Planetas} 
 ********** CAMBIAR EXPLICACIÓN ********** 
 Para resolver este ejercicio haremos uso del paquete “arules”. Este paquete de R nos proporciona las funciones necesarias para realizar nuestro análisis de asociación.
 
@@ -44,83 +44,259 @@ El objetivo es obtener las asociaciones cuyo soporte sea igual o superior al 50\
 
 \subsection{Apartado 1 - Árboles de decisión. Algoritmo Hunt}
 
-********** CAMBIAR EXPLICACIÓN ********** 
-Se pide, para las siguientes calificaciones de la tabla \ref{tab:tabla-calificaciones}, obtener una función de clasificación, utilizando como medida de impureza el Gini a la hora de realizarla.
+En el primer apartado, se pide que, a partir de la muestra de las calificaciones de distintos alumnos “calificacionesMuestra.txt”, se obtenga la función de clasificación, utilizando para ellos, la medida de impureza Gini. 
+
+La clasificación se realizará a partir de los siguientes atributos, siendo calificación el atributo clasificador:
+\begin{enumerate}
+\item Teoría
+\item Laboratorio
+\item Práctica
+\item Calificación
+\end{enumerate}
+
+A continuación, mostramos la tabla con los datos:
 
 <<>>==
-# Leemos los datos
-calificaciones <- read.table("./Parte 1/calificacionesMuestra.txt")
+# Primero leemos los datos.
+calificaciones <- read.table("./data/calificacionesMuestra.txt")
 muestra <- data.frame(calificaciones)
-calificaciones
+#Mostramos la tabla con los datos.
 muestra
 @
 
-Para realizar el análisis, el primer paso es cargar las librerías de \textit{rpart} y \textit{tree}.
+Para poder realizar el análisis cargamos las librerías \textit{tree} y \textit{rpart}
 
 <<>>==
-# Cargamos librerias
-library('rpart')
+# Cargamos librerías necesarias.
 library('tree')
+library('rpart')
 @
 
-Una vez hecho esto, leemos los datos de la muestra de calificaciones y posteriormente las insertamos en un \textit{dataframe}:
+Para realizar la clasificación, podemos utilizar cualquiera de las librerías cargadas, rpart y tree. Estas dos librerías utilizan para realizar la clasificación la medida de impureza Gini, con lo cual, no hace falta realizar ningún cambio en ninguna de sus llamadas.
 
-<<>>==
-# Leemos los datos
-calificaciones <- read.table("./Parte 1/calificacionesMuestra.txt")
-muestra <- data.frame(calificaciones)
-@
-
-Ahora se puede utilizar rpart o rtree para clasificar:
-
-Con rpart:
+\subsubsection{Librería rpart}
 
 <<echo=true>>= 
-clasificacion <- rpart(Calificacion~., data=muestra, method="class", minsplit=1)
-print(clasificacion)
+clasificacionRpart <- rpart(Calificacion~., data=muestra, method="class", minsplit=1)
+#Mostramos el resultado
+print(clasificacionRpart)
 @
 
+Como podemos observar la clasificación utilizando la librería rpart se realiza de forma correcta.
 
-Observamos la estructura de los nodos en la impresión por pantalla que realiza, y vemos que consigue realizar la clasificación.
-
-Con tree:
+\subsubsection{Librería tree}
 
 <<echo=true>>= 
-calificaciontree <- tree(Calificacion~., data=muestra, mincut=1, minsize=2)
-print(calificaciontree)
+calificacionTree <- tree(Calificacion~., data=muestra, mincut=1, minsize=2)
+print(calificacionTree)
 @
 
-Podemos observar que se obtiene el mismo resultado para ambas librerías, debido a que ambas utilizan, por defecto, Gini para calcular la impureza por lo que no es necesario modificar la llamada. 
+Vemos que utilizando la librería tree el resultado de la clasificación es el mismo, esto se debe a que, como hemos dicho anteriormente, las dos librería utilizan como medida de impureza Gini por defecto.
 
-\subsection{Apartado 2 - Análisis de regresión lineal}
+\subsubsection{Apartado 2 - Análisis de regresión lineal}
 
-En este apartado se pide, que para la muestra de los planetas dada se realice un análisis de regresión lineal.
+Para este apartado, se pide que se realice un análisis de regresión lineal a partir de la muestra de los planetas “planetasMuestra.txt”.
 
-\begin{table}[!htbp]
-\centering
-\caption{Planetas con radio y densidad}
-\label{tab:tabla-planetas}
-\begin{tabular}{lll}
-Mercurio & 2.4 & 5.4 \\
-Venus    & 6.1 & 5.2 \\
-Tierra   & 6.4 & 5.5 \\
-Marte    & 3.4 & 3.9
-\end{tabular}
-\end{table}
-
-Cargamos los datos: 
 <<echo=true>>= 
-# Cargamos los datos
-planetas <- read.table("./Parte 1/planetasMuestra.txt")
+# Leemos y mostramos los datos
+planetas <- read.table("./data/planetasMuestra.txt")
+planetas
 @
 
+ ********** CAMBIAR EXPLICACIÓN ********** 
 Una vez cargados los datos realizamos el análisis de regresión, entre la densidad (D) y el radio (R), obteniendo los coeficientes asociados:
 <<echo=true>>= 
-# Estudiamos la regresion
+# Calculamos la regresión
 regresion = lm(D~R, data=planetas)
 print(regresion)
 @
 
+ ********** EXPLICAR REGRESION Y INTERPRETAR DATOS SI ES POSIBLE ********** 
+
+
+\section{Ejercicio 2 - Análisis de clasificación de datos. Vehículos - Notas} 
+
+Para este segundo ejercicio se deben realizar los mismo cálculos que para el ejercicio 1, pero con otras muestras y cambiando la forma en la que se calculan los resultados.
+Las muestras utilizadas para este ejercicio serán “muestra1.txt” y “muestra2.txt”.
+
+\subsection{Apartado 1 - Árboles de decisión. Algoritmo Hunt}
+
+Para el primer apartado, a partir de una muestra con datos sobre las características de los vehículos, se pide realizar un análisis de clasificación de los datos sobre el atributo TipoVehiculo.
+
+La clasificación se realizará a partir de los siguientes atributos, siendo calificación el atributo clasificador tipo vehículos:
+\begin{enumerate}
+\item Tipo carnet
+\item Número de ruedas
+\item Número de pasajeros
+\item Tipo vehículo
+\end{enumerate}
+
+<<echo=true>>= 
+# Leemos los datos de la primera muetra
+datos <- read.table("./data/muestra1.txt")
+muestra1 <- data.frame(datos)
+# Mostramos la tabla
+muestra1
+@
+
+<<echo=true>>= 
+# Realizamos y mostramos la clasificación de los datos en función del campo TipoVehiculo
+clasificacion <- rpart(TipoVehiculo~., data=muestra1, method="class", minsplit=1)
+print(clasificacion)
+@
+
+Para poder realizar la visualización de los datos utilizamos la herramienta \textit{plot}
+
+<<echo=true>>= 
+plot(clasificacion, uniform=TRUE, main="Clasificación de vehículos") 
+text(clasificacion, use.n=TRUE, all=TRUE, cex=.7, fancy=TRUE, fwidth=0.5, fheight=0.7)
+@
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=200px,keepaspectratio]{./arbolVehiculos.png}
+  \caption{Árbol de decisión - Muestra 1}
+  \label{fig:arbol}
+\end{figure}
+
+ ********** COMENTAR Y EXPLICAR EL GRÁFICO ********** 
+
+\subsection{Apartado 2 - Análisis de regresión lineal}
+Para este apartado, se pide que se realice un análisis de regresión lineal a partir “muestra2.txt”.
+
+
+\subsubsection{Muestra 1}
+Se tiene la siguiente muestra de pares de datos:
+
+Se resuelve as�:
+<<echo=true>>= 
+# Cargamos los datos y los dividimos en 4 muestras
+datos <- read.table("./data/muestra2.txt", header=TRUE) 
+datos
+muestras <- split(datos, factor(sort(rank(row.names(datos))%%4))) 
+
+cat("Muestra 1: \n\n")
+regresion1 = lm(Y~X, data=muestras[[1]])
+print(regresion1)
+@
+
+\subsubsection{Muestra 2}
+Se tiene la siguiente muestra de pares de datos:
+\begin{table}[!htbp]
+\centering
+\caption{Muestra 2}
+\label{tab:tabla-numeros-2}
+\begin{tabular}{ll}
+10 & 9.14 \\
+8  & 8.14 \\
+13 & 8.74 \\
+9  & 8.77 \\
+11 & 9.26 \\
+14 & 8.1  \\
+6  & 6.13 \\
+4  & 3.1  \\
+12 & 9.13 \\
+7  & 7.26 \\
+5  & 5.74
+\end{tabular}
+\end{table}
+
+Se resuelve as�:
+<<echo=true>>= 
+# Cargamos los datos y los dividimos en 4 muestras
+datos <- read.table("./data/muestra2.txt", header=TRUE) 
+muestras <- split(datos, factor(sort(rank(row.names(datos))%%4))) 
+
+cat("\nMuestra 2: \n\n")
+regresion2 = lm(Y~X, data=muestras[[2]])
+print(regresion2)
+@
+
+\subsubsection{Muestra 3}
+Se tiene la siguiente muestra de pares de datos:
+\begin{table}[!htbp]
+\centering
+\caption{Muestra 3}
+\label{tab:tabla-numeros-3}
+
+Se resuelve as�:
+<<echo=true>>= 
+# Cargamos los datos y los dividimos en 4 muestras
+datos <- read.table("./data/muestra2.txt", header=TRUE) 
+muestras <- split(datos, factor(sort(rank(row.names(datos))%%4))) 
+
+cat("\nMuestra 3: \n\n")
+regresion3 = lm(Y~X, data=muestras[[3]])
+print(regresion3)
+@
+
+\subsubsection{Muestra 3}
+Se tiene la siguiente muestra de pares de datos:
+\begin{table}[!htbp]
+\centering
+\caption{Muestra 4}
+\label{tab:tabla-numeros-4}
+\begin{tabular}{ll}
+8  & 6.58 \\
+8  & 5.76 \\
+8  & 7.71 \\
+8  & 8.84 \\
+8  & 8.47 \\
+8  & 7.04 \\
+8  & 5.25 \\
+19 & 12.5 \\
+8  & 5.56 \\
+8  & 7.91 \\
+8  & 6.89
+\end{tabular}
+\end{table}
+
+Se resuelve as�:
+<<echo=true>>= 
+# Cargamos los datos y los dividimos en 4 muestras
+datos <- read.table("./data/muestra2.txt", header=TRUE) 
+muestras <- split(datos, factor(sort(rank(row.names(datos))%%4))) 
+
+cat("\nMuestra 4: \n\n")
+regresion4 = lm(Y~X, data=muestras[[4]])
+print(regresion4)
+@
+
+Finalmente, hemos realizado la gr�fica para poder visualizar la regresi�n:
+<<echo=true>>= 
+# Pintamos las graficas resultantes de las regresiones
+par(mfrow=c(2,2))
+plot(muestras[[1]]$X, muestras[[1]]$Y, main="Muestra 1", xlab="x", ylab="y")
+abline(regresion1, col="red")
+plot(muestras[[2]]$X, muestras[[2]]$Y, main="Muestra 2", xlab="x", ylab="y")
+abline(regresion2, col="red")
+plot(muestras[[3]]$X, muestras[[3]]$Y, main="Muestra 3", xlab="x", ylab="y")
+abline(regresion3, col="red")
+plot(muestras[[4]]$X, muestras[[4]]$Y, main="Muestra 4", xlab="x", ylab="y")
+abline(regresion4, col="red")
+mtext(expression(paste(bold("Comparativa de rectas de regresion de las muestras"))),
+         side = 3, line = -2, outer = TRUE)
+@
+
+Generando el siguiente gr�fico:
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=200px,keepaspectratio]{./plotregresion.png}
+  \caption{Regresiones de las muestras}
+  \label{fig:regresiones}
+\end{figure}
+
+\clearpage
+
+
+\section{Conclusiones}
+
+********** CAMBIAR EXPLICACIÓN ********** 
+
+Mediante esta pr�ctica hemos empleado herramientas que permiten clasificar elementos partiendo de una muestra. 
+Observamos que existe gran cantidad de soporte y paquetes por parte de la comunidad para realizar este tipo de an�lisis 
+de datos.
+Contemplamos tambi�n la facilidad de uso a la hora de realizar estos an�lisis, y la extensi�n y potencia de estos an�lisis.
 
 
 
