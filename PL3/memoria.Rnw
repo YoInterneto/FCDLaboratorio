@@ -6,7 +6,7 @@
 \usepackage{hyperref}
 
 
-\title{PECL2 - Fundamentos de la ciencia de datos}
+\title{PECL3 - Fundamentos de la ciencia de datos}
 \author{Mario Adán Herrero \and Alberto González Martínez \and Branimir Stefanov Yanev \and Diego Gutiérrez Marco}
 
 \begin{document}
@@ -14,9 +14,9 @@
 \SweaveOpts{concordance=TRUE, cache=TRUE}
 
 \begin{abstract}
-En el siguiente documento se presentan los resultados y solución de la PECL2 del laboratorio de Fundamentos de la Ciencia de Datos.
-Se realizará un análisis de asociación de datos siguiendo el ejercicio realizado en teoría. Utilizaremos el algoritmo Apriori y obtendremos aquellas asociaciones cuyo soporte sea mayor o igual que 50\% y cuya confianza sea mayor o igual que 80\%. Se mostrarán los resultados en este pdf utilizando las herramientas Sweave y TinyTex/MikTex.
-
+En el siguiente documento se presentan los resultados y solución de la PECL3 del laboratorio de Fundamentos de la Ciencia de Datos.
+Se realizará un análisis de clasificación de los datos utilizando R siguiendo los ejercicios realizados previamente en teoría.
+Para la resolución del ejercicio utilizaremos el algoritmo de construcción de árboles de decisión de Hunt y también realizaremos un análisis de regresión lineal. Los datos calculados se mostrarán en este pdf utilizando las herramientas Sweave y TinyTex/MikTex.
 \end{abstract}
 
 \newpage
@@ -25,7 +25,8 @@ Se realizará un análisis de asociación de datos siguiendo el ejercicio realiz
 
 \newpage
 
-\section{Introducción} 
+\section{Introducción}
+ ********** CAMBIAR EXPLICACIÓN ********** 
 La práctica consta de dos partes:
 
 En la primera parte, se va a realizar un análisis de asociación, utilizando R, aplicando conceptos vistos en la teoría y haciendo uso del algoritmo Apriori, se resolverá el mismo problema visto en teoría.
@@ -33,34 +34,95 @@ En la primera parte, se va a realizar un análisis de asociación, utilizando R,
 En la segunda parte, el grupo desarrollará un enunciado, y su posterior solución, de un ejercicio que contenga modificaciones del ejercicio hecho en clase, en el que se realice un análisis de asociación con R.
 
 
-\section{Ejercicio 1- Análisis de asociación. Cesta de la compra}
+\section{Ejercicio 1- Análisis de clasificación de datos.} 
+********** CAMBIAR EXPLICACIÓN ********** 
 Para resolver este ejercicio haremos uso del paquete “arules”. Este paquete de R nos proporciona las funciones necesarias para realizar nuestro análisis de asociación.
 
 En este caso en particular analizaremos las compras de varios usuarios para concluir qué productos son comprados juntos habitualmente.
 
 El objetivo es obtener las asociaciones cuyo soporte sea igual o superior al 50\% y cuya confianza sea igual o superior al 80\%.
 
-\section{Apartado 1 - Analisis de clasificacion supervisada}
+\subsection{Apartado 1 - Árboles de decisión. Algoritmo Hunt}
 
-\subsubsection{arboles de decision}
+********** CAMBIAR EXPLICACIÓN ********** 
+Se pide, para las siguientes calificaciones de la tabla \ref{tab:tabla-calificaciones}, obtener una función de clasificación, utilizando como medida de impureza el Gini a la hora de realizarla.
 
-Se pide, para las siguientes calificaciones de la tabla \ref{tab:tabla-calificaciones}, obtener una funci�n de clasificaci�n, utilizando como medida de impureza el Gini a la hora de realizarla.
+<<>>==
+# Leemos los datos
+calificaciones <- read.table("./Parte 1/calificacionesMuestra.txt")
+muestra <- data.frame(calificaciones)
+calificaciones
+muestra
+@
+
+Para realizar el análisis, el primer paso es cargar las librerías de \textit{rpart} y \textit{tree}.
+
+<<>>==
+# Cargamos librerias
+library('rpart')
+library('tree')
+@
+
+Una vez hecho esto, leemos los datos de la muestra de calificaciones y posteriormente las insertamos en un \textit{dataframe}:
+
+<<>>==
+# Leemos los datos
+calificaciones <- read.table("./Parte 1/calificacionesMuestra.txt")
+muestra <- data.frame(calificaciones)
+@
+
+Ahora se puede utilizar rpart o rtree para clasificar:
+
+Con rpart:
+
+<<echo=true>>= 
+clasificacion <- rpart(Calificacion~., data=muestra, method="class", minsplit=1)
+print(clasificacion)
+@
+
+
+Observamos la estructura de los nodos en la impresión por pantalla que realiza, y vemos que consigue realizar la clasificación.
+
+Con tree:
+
+<<echo=true>>= 
+calificaciontree <- tree(Calificacion~., data=muestra, mincut=1, minsize=2)
+print(calificaciontree)
+@
+
+Podemos observar que se obtiene el mismo resultado para ambas librerías, debido a que ambas utilizan, por defecto, Gini para calcular la impureza por lo que no es necesario modificar la llamada. 
+
+\subsection{Apartado 2 - Análisis de regresión lineal}
+
+En este apartado se pide, que para la muestra de los planetas dada se realice un análisis de regresión lineal.
 
 \begin{table}[!htbp]
 \centering
-\caption{Muestra de calificaciones: }
-\label{tab:tabla-calificaciones}
-\begin{tabular}{llll}
-A & A & B & Ap \\
-A & B & D & Ss \\
-D & D & C & Ss \\
-D & D & A & Ss \\
-B & C & B & Ss \\
-C & B & B & Ap \\
-B & B & A & Ap \\
-C & D & C & Ss \\
-B & A & C & Ss
+\caption{Planetas con radio y densidad}
+\label{tab:tabla-planetas}
+\begin{tabular}{lll}
+Mercurio & 2.4 & 5.4 \\
+Venus    & 6.1 & 5.2 \\
+Tierra   & 6.4 & 5.5 \\
+Marte    & 3.4 & 3.9
 \end{tabular}
 \end{table}
 
-Para realizar el an�lisis, el primer paso es cargar las librer�as de \textit{rpart} y \textit{tree}. 
+Cargamos los datos: 
+<<echo=true>>= 
+# Cargamos los datos
+planetas <- read.table("./Parte 1/planetasMuestra.txt")
+@
+
+Una vez cargados los datos realizamos el análisis de regresión, entre la densidad (D) y el radio (R), obteniendo los coeficientes asociados:
+<<echo=true>>= 
+# Estudiamos la regresion
+regresion = lm(D~R, data=planetas)
+print(regresion)
+@
+
+
+
+
+\end{document}
+
