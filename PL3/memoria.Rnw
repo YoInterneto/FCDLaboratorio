@@ -173,7 +173,6 @@ datos <- read.table("./data/muestra2.txt", header=TRUE)
 datos
 # Dividimos nuestra muestra en 4 muestras de menor tamaño
 muestras <- split(datos, factor(sort(rank(row.names(datos))%%4))) 
-muestras
 @
 
 \subsubsection{Muestra 1}
@@ -192,6 +191,8 @@ regresion1 = lm(Y~X, data=muestras[[1]])
 regresion1
 @
 
+ ********** PODEIS COMENTAR UN POCO VALOR DE REGRESION ********** 
+
 \subsubsection{Muestra 2}
 Calcularemos la regresión para los datos de la segunda muestra.
 
@@ -207,6 +208,8 @@ Calculamos la regresión de la siguiente forma:
 regresion2 = lm(Y~X, data=muestras[[2]])
 regresion2
 @
+
+ ********** PODEIS COMENTAR UN POCO VALOR DE REGRESION ********** 
 
 \subsubsection{Muestra 3}
 Calcularemos la regresión para los datos de la tercera muestra.
@@ -224,6 +227,8 @@ regresion3 = lm(Y~X, data=muestras[[3]])
 regresion3
 @
 
+ ********** PODEIS COMENTAR UN POCO VALOR DE REGRESION ********** 
+
 \subsubsection{Muestra 4}
 Calcularemos la regresión para los datos de la cuarta muestra.
 
@@ -239,6 +244,8 @@ Calculamos la regresión de la siguiente forma:
 regresion4 = lm(Y~X, data=muestras[[4]])
 regresion4
 @
+
+ ********** PODEIS COMENTAR UN POCO VALOR DE REGRESION ********** 
 
 Una vez calculada la regresión de las muestras, necesitamos una forma de poder visualizar el resultado, para ello, hemos optado por hacer una figura con las gráficas de regresión de cada una de las muestras.
 
@@ -269,6 +276,9 @@ Generamos los siguientes gráficos:
   \label{fig:regresiones}
 \end{figure}
 
+ ********** COMENTAR Y EXPLICAR EL GRÁFICO ********** 
+ ********** DECIR TAMBIEN QUE ESTÁN DISPERSOS DEBIDO A QUE SON VALORES ALEATORIOS **********
+
 \clearpage
 
 
@@ -283,3 +293,4 @@ Contemplamos también la facilidad de uso a la hora de realizar estos análisis,
 
 
 \end{document}
+
