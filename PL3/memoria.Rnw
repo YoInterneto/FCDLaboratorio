@@ -254,16 +254,16 @@ Una vez calculada la regresión de las muestras, necesitamos una forma de poder 
 par(mfrow=c(2,2))
 # Muestra1
 plot(muestras[[1]]$X, muestras[[1]]$Y, main="Muestra 1", xlab="x", ylab="y")
-abline(regresion1, col="red")
+abline(regresion1, col="blue")
 # Muestra2
 plot(muestras[[2]]$X, muestras[[2]]$Y, main="Muestra 2", xlab="x", ylab="y")
 abline(regresion2, col="red")
 # Muestra3
 plot(muestras[[3]]$X, muestras[[3]]$Y, main="Muestra 3", xlab="x", ylab="y")
-abline(regresion3, col="red")
+abline(regresion3, col="orange")
 # Muestra4
 plot(muestras[[4]]$X, muestras[[4]]$Y, main="Muestra 4", xlab="x", ylab="y")
-abline(regresion4, col="red")
+abline(regresion4, col="black")
 mtext(expression(paste(bold("Datos de regresión de las muestras"))),
          side = 3, line = -2, outer = TRUE)
 @
