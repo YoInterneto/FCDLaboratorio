@@ -83,6 +83,7 @@ Como podemos observar la clasificación utilizando la librería rpart se realiza
 
 <<echo=true>>= 
 calificacionTree <- tree(Calificacion~., data=muestra, mincut=1, minsize=2)
+#Mostramos el resultado
 print(calificacionTree)
 @
 
