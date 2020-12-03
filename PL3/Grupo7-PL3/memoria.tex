@@ -73,17 +73,16 @@ suceso9      B   A     C           Ss
 \end{Soutput}
 \end{Schunk}
 
-Para poder realizar el análisis cargamos las librerías \textit{tree} y \textit{rpart}
+Para poder realizar el análisis cargamos la librería \textit{rpart}
 
 \begin{Schunk}
 \begin{Sinput}
-> # Cargamos librerías necesarias.
-> library('tree')
+> # Cargamos la librería necesaria.
 > library('rpart')
 \end{Sinput}
 \end{Schunk}
 
-Para realizar la clasificación, podemos utilizar cualquiera de las librerías cargadas, rpart y tree. Estas dos librerías utilizan para realizar la clasificación la medida de impureza Gini, con lo cual, no hace falta realizar ningún cambio en ninguna de sus llamadas.
+La librería rpart, por defecto, hace uso de la medida de impureza Gini con lo cual no hace falta modificar la llamada a esta para generar el árbol de decisión utilizando Gini, tal y como se pide en el enunciado.
 
 \subsubsection{Librería rpart}
 
@@ -107,26 +106,9 @@ node), split, n, loss, yval, (yprob)
 \end{Soutput}
 \end{Schunk}
 
-Como podemos observar la clasificación utilizando la librería rpart se realiza de forma correcta.
+Como podemos observar la clasificación utilizando la librería rpart se realiza de forma correcta. La forma de mostrar el resultado no es muy gráfica pero es correcta.
 
-\subsubsection{Librería tree}
-
-\begin{Schunk}
-\begin{Sinput}
-> calificacionTree <- tree(Calificacion~., data=muestra, mincut=1, minsize=2)
-> print(calificacionTree)
-\end{Sinput}
-\begin{Soutput}
-node), split, n, deviance, yval
-      * denotes terminal node
-
-1) root 9 NA NA *
-\end{Soutput}
-\end{Schunk}
-
-Vemos que utilizando la librería tree el resultado de la clasificación es el mismo, esto se debe a que, como hemos dicho anteriormente, las dos librería utilizan como medida de impureza Gini por defecto.
-
-\subsubsection{Apartado 2 - Análisis de regresión lineal}
+\subsection{Apartado 2 - Análisis de regresión lineal}
 
 Para este apartado, se pide que se realice un análisis de regresión lineal a partir de la muestra de los planetas “planetasMuestra.txt”.
 
@@ -239,7 +221,7 @@ Para poder realizar la visualización de los datos utilizamos la herramienta \te
 
 \begin{figure}[!htbp]
   \centering
-  \includegraphics[width=200px,keepaspectratio]{./arbolVehiculos.png}
+  \includegraphics[width=200px,keepaspectratio]{./imagenes/arbolVehiculos.png}
   \caption{Árbol de decisión - Muestra 1}
   \label{fig:arbol}
 \end{figure}
@@ -503,7 +485,7 @@ Una vez calculada la regresión de las muestras, necesitamos una forma de poder 
 Generamos los siguientes gráficos:
 \begin{figure}[!htbp]
   \centering
-  \includegraphics[width=200px,keepaspectratio]{./regresion.png}
+  \includegraphics[width=200px,keepaspectratio]{./imagenes/regresion.png}
   \caption{Cálculo de regresión de las muestras}
   \label{fig:regresiones}
 \end{figure}

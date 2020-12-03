@@ -139,7 +139,7 @@ text(clasificacion, use.n=TRUE, all=TRUE, cex=.7, fancy=TRUE, fwidth=0.5, fheigh
 
 \begin{figure}[!htbp]
   \centering
-  \includegraphics[width=200px,keepaspectratio]{./arbolVehiculos.png}
+  \includegraphics[width=200px,keepaspectratio]{./imagenes/arbolVehiculos.png}
   \caption{Árbol de decisión - Muestra 1}
   \label{fig:arbol}
 \end{figure}
@@ -250,7 +250,7 @@ mtext(expression(paste(bold("Datos de regresión de las muestras"))),
 Generamos los siguientes gráficos:
 \begin{figure}[!htbp]
   \centering
-  \includegraphics[width=200px,keepaspectratio]{./regresion.png}
+  \includegraphics[width=200px,keepaspectratio]{./imagenes/regresion.png}
   \caption{Cálculo de regresión de las muestras}
   \label{fig:regresiones}
 \end{figure}
