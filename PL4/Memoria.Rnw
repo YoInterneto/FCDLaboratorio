@@ -1,0 +1,206 @@
+\documentclass[a4paper]{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[spanish]{babel}
+\usepackage{lmodern}
+\usepackage{Sweave}
+
+\title{PECL4 - Fundamentos de la ciencia de datos}
+\author{Mario Adán Herrero \and Alberto González Martínez \and Branimir Stefanov Yanev \and Diego Gutiérrez Marco}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE, cache=TRUE}
+\maketitle
+
+\begin{abstract}
+En el siguiente documento se presentan los resultados y la solución de la PECL4 del laboratori de Fundamentos de la Ciencia de los Datos.
+En esta ocasión realizaremos una clasificación no supervisada de los datos siguiendo el ejercicio realizado en teoria.
+Para la resolución del ejercicio utilizaremos el método k-means, que nos permite clasificar estos elementos en función de diferentes centroides.
+\end{abstract}
+
+\section{Introducción - Clasificación no supervisada}
+
+En esta práctica utilizaremos el método de clasificación no supervisada k-means como algoritmo para realizar la clasificación. 
+Partiendo de una muestra dada, utilizaremos la media aritmética para definir los diferentes centroides de los datos, clasificando así 
+los elementos en varios conjuntos, cada uno asociado a uno de los centroides utilizados. 
+
+\section{Apartado 1 - Análisis de clasificación no supervisada}
+
+\subsection{Introducción}
+En este apartado seguiremos el ejercicio de clasificación no supervisada visto en clase, donde clasificamos los datos de la muestra en en dos clusters.
+Se tienen los siguientes datos en forma (x,y): 
+
+\begin{enumerate}
+/item (4, 4) 
+/item (3, 5)
+/item (1, 2)
+/item (5, 5)
+/item (0, 1)
+/item (2, 2)
+/item (4, 5)
+/item (2, 1)
+\end{enumerate}
+
+Lo primero que debemos hacer es cargar los datos de la muestra. Para ello los introducimos directamente en la declaración de la matriz:
+No necesitamos cargar ninguna libería adicional ya que nos sirve con el paquete base.
+<<>>==
+#Cargamos datos matriz
+matriz_datos_iniciales<-matrix(c(4,4,
+                                 3,5,
+                                 1,2,
+                                 5,5,
+                                 0,1,
+                                 2,2,
+                                 4,5,
+                                 2,1),
+                               # Filas, columnas
+                               2,8)
+matriz_datos_iniciales<-t(matriz_datos_iniciales)
+@
+
+Ahora podemos establecer los centroides:
+
+<<echo=true>>= 
+#Establecemos los centroides
+centroides <- matrix(c(0,1,2,2),2,2)
+
+centroides <- t(centroides)
+@
+
+
+Realizamos la clasificación llamando al método k-means. Con 4 iteraciones es suficiente para clasificar los datos: 
+
+<<echo=true>>= 
+clasificacion_kmeans = kmeans(matriz_datos_iniciales, centroides, 4)
+@
+
+Al imprimir vemos una tabla cuya primera columna indica el centroide asociado al par de datos, mostrados en la segunda y tercera columna:
+<<echo=true>>= 
+matriz_datos_clasificados <- cbind(clasificacion_kmeans$cluster,
+                                   matriz_datos_iniciales)
+@
+
+
+Para separar los datos en función del clúster al que pertenecen, creamos dos vectores y vamos añadiendo datos a cada uno de los clústers.
+#Matriz de datos del primer cluster
+matriz_cluster1 <- subset(matriz_datos_clasificados,
+                          matriz_datos_clasificados[,1]==1)
+#Matriz de datos del segundo cluster
+matriz_cluster2 <- subset(matriz_datos_clasificados,
+                          matriz_datos_clasificados[,1]==2)
+
+matriz_cluster1<- matriz_cluster1[,-1]
+matriz_cluster2<- matriz_cluster2[,-1]
+
+print(matriz_cluster1)
+print(matriz_cluster2)
+@
+
+
+
+
+
+//HE LLEGADO HASTA AQUI
+//FALTA EL EJ2 ENTERO
+//FALTA EL EJ3 QUE ES ANALIZAR Y APLICAR EL PAQUETE.
+
+
+
+
+
+
+\section{Apartado 2 - Ejercicio propio}
+
+Para este apartado vamos a realizar una clasificación del color de una imagen con kmeans. Para ello, vamos a necesitar instalar las librerías \textit{jpeg} y \textit{ggplot2}.
+
+Tras establecer el directorio de trabajo, leemos la imagen, obtenemos sus dimensiones, y la 
+convertimos a una imagen RGB.
+
+
+<<echo=true>>= 
+library(jpeg)
+library(ggplot2)
+
+# Leemos imagen
+imagen <- readJPEG(normalizePath('amarillo.jpg'))
+
+# Obtenemos dimensión de la imagen
+dimensionesImg <- dim(imagen)
+
+# Asignamos colores RGB de la imagen
+imgRGB <- data.frame(
+  x = rep(1:dimensionesImg[2], each = dimensionesImg[1]),
+  y = rep(dimensionesImg[1]:1, dimensionesImg[2]),
+  R = as.vector(imagen[,,1]),
+  G = as.vector(imagen[,,2]),
+  B = as.vector(imagen[,,3])
+  )
+@
+
+Realizamos la clasificación supervisada con - por ejemplo - 8 clústers.
+En función del número de clusters utilizados, la imagen de salida tendrá más o menos canales de color. 
+<<echo=true>>= 
+# Realizamos el clustering
+nClusters <- 8
+kMeans <- kmeans(imgRGB[, c("R", "G", "B")], centers = nClusters)
+nColores <- rgb(kMeans$centers[kMeans$cluster,])
+@
+
+Finalmente, renderizamos la imagen y la escribimos en disco:
+\textbf{Nota: } el renderizado toma algo menos de un minuto en mi ordenador. Tener en cuenta
+en caso de querer ejecutar el \textit{rnw}. Aunque parezca que se queda colgado, al final
+consigue procesar la imagen. 
+<<echo=true>>= 
+
+# Creamos plot
+show(ggplot(data = imgRGB, aes(x = x, y = y)) + 
+  geom_point(colour = nColores) +
+  labs(title = paste("K-Means realizado con ", nClusters, " clusters. ")) +
+  xlab("x") +
+  ylab("y"))
+
+# Dumpeamos en una imagen
+ggsave("amarillo_renderizado.png")
+@
+
+Podemos comparar la imagen orginal con la imagen tras realizar la clasificación:
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=80px,keepaspectratio]{./amarillo.jpg}
+  \caption{Imagen original}
+  \label{fig:original}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=80px,keepaspectratio]{./clusteres4.png}
+  \caption{Imagen con colores clasificados en 4 clústeres.}
+  \label{fig:original}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=80px,keepaspectratio]{./clusteres8.png}
+  \caption{Imagen con colores clasificados en 8 clústeres.}
+  \label{fig:original}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=80px,keepaspectratio]{./clusteres12.png}
+  \caption{Imagen con colores clasificados en 12 clústeres.}
+  \label{fig:original}
+\end{figure}
+
+\clearpage
+\clearpage
+
+\section{Conclusiones}
+El lenguaje R trae herramientas potentes que permiten realizar análisis de forma sencilla y eficiente.
+Con ayuda de librerías externas, podemos aplicar estos análisis a casos pragmáticos tales como análisis
+de imágenes, como hemos mostrado en la práctica. 
+
+
+
+\end{document}
