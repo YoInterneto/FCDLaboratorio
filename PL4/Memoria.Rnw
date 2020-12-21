@@ -144,20 +144,41 @@ print(m3)
 @
 
 \section{Apartado 3 - Análisis paquete de R}
+Para la tercera y última parte de la práctica, analizaremos y utilizaremos el paquete LearnCrust,
+el cual, permite hacer cálculos mediante algoritmos de clustering jeráquico.
 
-Instalación paquete
+Para poder utilizar el paquete primero lo instalamos y cargamos en nuestro entorno de trabajo:
 <<echo=true>>=
 install.packages("LearnClust")
 library(LearnClust)
 @
 
+A continuación, haremos uso de algunas funciones de este paquete, las cuales son las siguientes:
+
+**** ENUMERAR TODOS LOS PAQUETES **** 
+\begin{enumerate}
+\item AgglomerativeHC
+\item 
+\item
+\item
+\end{enumerate}
+
 Prueba de funciones del paquete con el enunciado del ejercicio
 del primer apartado. (Meter mas funciones y comentar lo que hacen)
+
+\subsection {Función AgglomerativeHC}
+**** EXPLICAR ****
 <<echo=true>>=
 matriz<-matrix(c(4,4,3,5,1,2,5,5,0,1,2,2,4,5,2,1),2,8)
 agglomerativeHC(matriz,'EUC','MAX')
 lista<-toList(matriz)
 @
+
+**** INSERTAMOS LA IMAGEN DE LA GRAFICA Y COMENTAR ****
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=200px,keepaspectratio]{./images/grafica1.png}
+\end{figure}
 
 \section{Conclusiones}
 El lenguaje R trae herramientas potentes que permiten realizar análisis de forma sencilla y eficiente.
