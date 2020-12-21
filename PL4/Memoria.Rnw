@@ -143,6 +143,22 @@ print(m2)
 print(m3)
 @
 
+\section{Apartado 3 - Análisis paquete de R}
+
+Instalación paquete
+<<echo=true>>=
+install.packages("LearnClust")
+library(LearnClust)
+@
+
+Prueba de funciones del paquete con el enunciado del ejercicio
+del primer apartado. (Meter mas funciones y comentar lo que hacen)
+<<echo=true>>=
+matriz<-matrix(c(4,4,3,5,1,2,5,5,0,1,2,2,4,5,2,1),2,8)
+agglomerative(matriz,'EUC','MAX')
+lista<-toList(matriz)
+@
+
 \section{Conclusiones}
 El lenguaje R trae herramientas potentes que permiten realizar análisis de forma sencilla y eficiente.
 Con ayuda de librerías externas, podemos aplicar estos análisis a casos pragmáticos tales como análisis
