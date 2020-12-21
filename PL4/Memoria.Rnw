@@ -32,14 +32,14 @@ En este apartado seguiremos el ejercicio de clasificación no supervisada visto e
 Se tienen los siguientes datos en forma (x,y): 
 
 \begin{enumerate}
-/item (4, 4) 
-/item (3, 5)
-/item (1, 2)
-/item (5, 5)
-/item (0, 1)
-/item (2, 2)
-/item (4, 5)
-/item (2, 1)
+\item (4, 4) 
+\item (3, 5)
+\item (1, 2)
+\item (5, 5)
+\item (0, 1)
+\item (2, 2)
+\item (4, 5)
+\item (2, 1)
 \end{enumerate}
 
 Lo primero que debemos hacer es cargar los datos de la muestra. Para ello los introducimos directamente en la declaración de la matriz:
@@ -155,7 +155,7 @@ Prueba de funciones del paquete con el enunciado del ejercicio
 del primer apartado. (Meter mas funciones y comentar lo que hacen)
 <<echo=true>>=
 matriz<-matrix(c(4,4,3,5,1,2,5,5,0,1,2,2,4,5,2,1),2,8)
-agglomerative(matriz,'EUC','MAX')
+agglomerativeHC(matriz,'EUC','MAX')
 lista<-toList(matriz)
 @
 
