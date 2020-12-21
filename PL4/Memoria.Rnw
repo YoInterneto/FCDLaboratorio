@@ -98,10 +98,6 @@ print(matriz_cluster1)
 print(matriz_cluster2)
 @
 
-//FALTA EL EJ2 ENTERO
-//FALTA EL EJ3 QUE ES ANALIZAR Y APLICAR EL PAQUETE.
-
-
 \section{Apartado 2 - Clasificación no supervisada modificado}
 
 En este apartado, desarrollaremos nuestro propio enunciado y la solución de este, realizando un análisis de clasificación no supervisada con R.
