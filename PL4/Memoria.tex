@@ -12,7 +12,7 @@
 
 \begin{document}
 \maketitle
-\SweaveOpts{concordance=TRUE, cache=TRUE}
+\input{Memoria-concordance}
 
 \begin{abstract}
 En el siguiente documento se presentan los resultados y la solución de la PECL4 del laboratorio de Fundamentos de la Ciencia de los Datos.
@@ -50,59 +50,82 @@ Se tienen los siguientes datos en forma (x,y):
 
 Lo primero que debemos hacer es cargar los datos de la muestra. Para ello los introducimos directamente en la declaración de la matriz:
 No necesitamos cargar ninguna libería adicional ya que nos sirve con el paquete base.
-<<>>==
-#Cargamos datos matriz
-matriz_datos_iniciales<-matrix(c(4,4,
-                                 3,5,
-                                 1,2,
-                                 5,5,
-                                 0,1,
-                                 2,2,
-                                 4,5,
-                                 2,1),
-                               # Filas, columnas
-                               2,8)
-matriz_datos_iniciales<-t(matriz_datos_iniciales)
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Cargamos datos matriz
+> matriz_datos_iniciales<-matrix(c(4,4,
++                                  3,5,
++                                  1,2,
++                                  5,5,
++                                  0,1,
++                                  2,2,
++                                  4,5,
++                                  2,1),
++                                # Filas, columnas
++                                2,8)
+> matriz_datos_iniciales<-t(matriz_datos_iniciales)
+\end{Sinput}
+\end{Schunk}
 
 Ahora podemos establecer los centroides:
 
-<<echo=true>>= 
-#Establecemos los centroides
-centroides <- matrix(c(0,1,2,2),2,2)
-
-centroides <- t(centroides)
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Establecemos los centroides
+> centroides <- matrix(c(0,1,2,2),2,2)
+> centroides <- t(centroides)
+\end{Sinput}
+\end{Schunk}
 
 
 Realizamos la clasificación llamando al método k-means. Con 4 iteraciones es suficiente para clasificar los datos: 
 
-<<echo=true>>= 
-clasificacion_kmeans = kmeans(matriz_datos_iniciales, centroides, 4)
-@
+\begin{Schunk}
+\begin{Sinput}
+> clasificacion_kmeans = kmeans(matriz_datos_iniciales, centroides, 4)
+\end{Sinput}
+\end{Schunk}
 
 Al imprimir vemos una tabla cuya primera columna indica el centroide asociado al par de datos, mostrados en la segunda y tercera columna:
-<<echo=true>>= 
-matriz_datos_clasificados <- cbind(clasificacion_kmeans$cluster,
-                                   matriz_datos_iniciales)
-@
+\begin{Schunk}
+\begin{Sinput}
+> matriz_datos_clasificados <- cbind(clasificacion_kmeans$cluster,
++                                    matriz_datos_iniciales)
+\end{Sinput}
+\end{Schunk}
 
 
 Para separar los datos en función del clúster al que pertenecen, creamos dos vectores y vamos añadiendo datos a cada uno de los clústers.
-<<echo=true>>=
-#Matriz de datos del primer cluster
-matriz_cluster1 <- subset(matriz_datos_clasificados,
-                          matriz_datos_clasificados[,1]==1)
-#Matriz de datos del segundo cluster
-matriz_cluster2 <- subset(matriz_datos_clasificados,
-                          matriz_datos_clasificados[,1]==2)
-
-matriz_cluster1<- matriz_cluster1[,-1]
-matriz_cluster2<- matriz_cluster2[,-1]
-
-print(matriz_cluster1)
-print(matriz_cluster2)
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Matriz de datos del primer cluster
+> matriz_cluster1 <- subset(matriz_datos_clasificados,
++                           matriz_datos_clasificados[,1]==1)
+> #Matriz de datos del segundo cluster
+> matriz_cluster2 <- subset(matriz_datos_clasificados,
++                           matriz_datos_clasificados[,1]==2)
+> matriz_cluster1<- matriz_cluster1[,-1]
+> matriz_cluster2<- matriz_cluster2[,-1]
+> print(matriz_cluster1)
+\end{Sinput}
+\begin{Soutput}
+     [,1] [,2]
+[1,]    1    2
+[2,]    0    1
+[3,]    2    2
+[4,]    2    1
+\end{Soutput}
+\begin{Sinput}
+> print(matriz_cluster2)
+\end{Sinput}
+\begin{Soutput}
+     [,1] [,2]
+[1,]    4    4
+[2,]    3    5
+[3,]    5    5
+[4,]    4    5
+\end{Soutput}
+\end{Schunk}
 
 \section{Apartado 2 - Clasificación no supervisada modificado}
 
@@ -110,54 +133,85 @@ En este apartado, desarrollaremos nuestro propio enunciado y la solución de est
 
 Vamos a realizar la clasificación de los clientes de una empresa, con el fin de realizar estrategias de marketing enfocadas a sus clientes más fieles. Los datos que tenemos serán las edades de los clientes y el total de compras que han realizado.
 
-<<echo=true>>= 
-# Introducimos los datos
-clientes <- data.frame(edad = c(21,35,26,53,23,43,32,42,45,31,19,53), 
-                       compras = c(5,4,6,3,8,3,4,4,2,2,5,1))
-@
+\begin{Schunk}
+\begin{Sinput}
+> # Introducimos los datos
+> clientes <- data.frame(edad = c(21,35,26,53,23,43,32,42,45,31,19,53), 
++                        compras = c(5,4,6,3,8,3,4,4,2,2,5,1))
+\end{Sinput}
+\end{Schunk}
 
 Realizamos la clasificación por medio del algoritmo k-means, con 3 clústers.
-<<echo=true>>= 
-# Aplicamos k-means
-resultado_kmeans <- kmeans(clientes, 3)
-@
+\begin{Schunk}
+\begin{Sinput}
+> # Aplicamos k-means
+> resultado_kmeans <- kmeans(clientes, 3)
+\end{Sinput}
+\end{Schunk}
 
 Visualizamos, en una tabla, resultado del algoritmo k-means. Podemos observar que la primera 
 columna representa el clúster y las otras dos columnas, los datos (edad y total de compras).
-<<echo=true>>=
-matriz_resultado <- cbind(resultado_kmeans$cluster, clientes)
-@
+\begin{Schunk}
+\begin{Sinput}
+> matriz_resultado <- cbind(resultado_kmeans$cluster, clientes)
+\end{Sinput}
+\end{Schunk}
 
 Separamos, en vectores, la matriz resultante del algortimo k-means, según el clúster al que 
 pertenezcan los datos. 
-<<echo=true>>=
-m1 <- subset(matriz_resultado,
-                          matriz_resultado[,1]==1)
-
-m2 <- subset(matriz_resultado,
-                          matriz_resultado[,1]==2)
-
-m3 <- subset(matriz_resultado,
-                          matriz_resultado[,1]==3)
-
-m1<- m1[,-1]
-m2<- m2[,-1]
-m3<- m3[,-1]
-
-print(m1)
-print(m2)
-print(m3)
-@
+\begin{Schunk}
+\begin{Sinput}
+> m1 <- subset(matriz_resultado,
++                           matriz_resultado[,1]==1)
+> m2 <- subset(matriz_resultado,
++                           matriz_resultado[,1]==2)
+> m3 <- subset(matriz_resultado,
++                           matriz_resultado[,1]==3)
+> m1<- m1[,-1]
+> m2<- m2[,-1]
+> m3<- m3[,-1]
+> print(m1)
+\end{Sinput}
+\begin{Soutput}
+   edad compras
+4    53       3
+12   53       1
+\end{Soutput}
+\begin{Sinput}
+> print(m2)
+\end{Sinput}
+\begin{Soutput}
+  edad compras
+2   35       4
+6   43       3
+8   42       4
+9   45       2
+\end{Soutput}
+\begin{Sinput}
+> print(m3)
+\end{Sinput}
+\begin{Soutput}
+   edad compras
+1    21       5
+3    26       6
+5    23       8
+7    32       4
+10   31       2
+11   19       5
+\end{Soutput}
+\end{Schunk}
 
 \section{Apartado 3 - Análisis paquete de R}
 Para la tercera y última parte de la práctica, analizaremos y utilizaremos el paquete LearnCrust,
 el cual, permite hacer cálculos mediante algoritmos de clustering jerárquico.
 
 Para poder utilizar el paquete primero lo instalamos y cargamos en nuestro entorno de trabajo:
-<<echo=true>>=
-install.packages("LearnClust")
-library(LearnClust)
-@
+\begin{Schunk}
+\begin{Sinput}
+> install.packages("LearnClust")
+> library(LearnClust)
+\end{Sinput}
+\end{Schunk}
 
 A continuación, haremos uso de algunas funciones de este paquete, las cuales son las siguientes:
 
@@ -178,11 +232,39 @@ tipo de acercamiento.
 El algoritmo convierte los datos que creamos en un objeto, crea los clusters y calcula una matriz de
 distancias con los clusters creados aplicando la distancia y acercamiento inidcados a la función. Agrupa los 
 clusters en uno nuevo y repite el mismo proceso hasta que existe un único cluster.
-<<echo=true>>=
-matriz<-matrix(c(4,4,3,5,1,2,5,5,0,1,2,2,4,5,2,1),2,8)
-agglomerativeHC(matriz,'EUC','MAX')
-lista<-toList(matriz)
-@
+\begin{Schunk}
+\begin{Sinput}
+> matriz<-matrix(c(4,4,3,5,1,2,5,5,0,1,2,2,4,5,2,1),2,8)
+> agglomerativeHC(matriz,'EUC','MAX')
+\end{Sinput}
+\begin{Soutput}
+$dendrogram
+Number of objects: 2 
+
+
+$clusters
+$clusters[[1]]
+  X1 X2
+1  4  3
+
+$clusters[[2]]
+  X1 X2
+1  4  5
+
+$clusters[[3]]
+  X1 X2
+1  4  3
+2  4  5
+
+
+$groupedClusters
+  cluster1 cluster2
+1        1        2
+\end{Soutput}
+\begin{Sinput}
+> lista<-toList(matriz)
+\end{Sinput}
+\end{Schunk}
 
 \begin{figure}[!htbp]
   \centering
@@ -193,25 +275,34 @@ lista<-toList(matriz)
 Esta función forma parte del método de agrupamiento jerárquico.
 Usando el valor distancia que le pasamos a la función, la función obtiene el cluster con la menor
 distancia. 
-<<echo=true>>=
-distance = 3
-
-getCluster(distance,matriz)
-@
+\begin{Schunk}
+\begin{Sinput}
+> distance = 3
+> getCluster(distance,matriz)
+\end{Sinput}
+\end{Schunk}
 
 \subsection {función chebyshevDistance}
 Esta función forma parte del método de agrupamiento jerárquico.
 Calcula la distancia de Chebyshev entre dos clusters.
-<<echo=true>>=
-x<-c(1,2,3,4)
-y<-c(5,6,7,8)
-
-matrizX<-matrix(x,ncol=4)
-matrizY<-matrix(y,ncol=4)
-
-chebyshevDistance(x,y)
-chebyshevDistance(matrizX,matrizY)
-@
+\begin{Schunk}
+\begin{Sinput}
+> x<-c(1,2,3,4)
+> y<-c(5,6,7,8)
+> matrizX<-matrix(x,ncol=4)
+> matrizY<-matrix(y,ncol=4)
+> chebyshevDistance(x,y)
+\end{Sinput}
+\begin{Soutput}
+[1] 4
+\end{Soutput}
+\begin{Sinput}
+> chebyshevDistance(matrizX,matrizY)
+\end{Sinput}
+\begin{Soutput}
+[1] 4
+\end{Soutput}
+\end{Schunk}
 
 \subsection {función normalizeWeight}
 Esta función permite normalizar pesos.
@@ -219,26 +310,74 @@ Si el primer parámetro toma valor TRUE, la función convertirá cualquier valor
 un valor "[0:1]".
 En caso de que el primer parámetro sea FALSE, la función no hará ningún cambio y los pesos serán
 los mismos. 
-<<echo=true>>=
-datos <- data.frame(matrix(c(1:10),ncol = 2))
-weight1 <- c(6.3,3.2)
-weight2 <- c(4.5,3.0)
-normalizeWeight(TRUE, weight1, datos)
-normalizeWeight(FALSE, weight1, datos)
-normalizeWeight(TRUE, weight2, datos)
-normalizeWeight(FALSE, weight2, datos)
-@
+\begin{Schunk}
+\begin{Sinput}
+> datos <- data.frame(matrix(c(1:10),ncol = 2))
+> weight1 <- c(6.3,3.2)
+> weight2 <- c(4.5,3.0)
+> normalizeWeight(TRUE, weight1, datos)
+\end{Sinput}
+\begin{Soutput}
+[1] 0.6631579 0.3368421
+\end{Soutput}
+\begin{Sinput}
+> normalizeWeight(FALSE, weight1, datos)
+\end{Sinput}
+\begin{Soutput}
+[1] 6.3 3.2
+\end{Soutput}
+\begin{Sinput}
+> normalizeWeight(TRUE, weight2, datos)
+\end{Sinput}
+\begin{Soutput}
+[1] 0.6 0.4
+\end{Soutput}
+\begin{Sinput}
+> normalizeWeight(FALSE, weight2, datos)
+\end{Sinput}
+\begin{Soutput}
+[1] 4.5 3.0
+\end{Soutput}
+\end{Schunk}
 
 \subsection {función newCluster}
 Esta función forma parte del método de agrupamiento jerárquico. 
 Crea un cluster a partir de dos clusters dados. Añade el nuevo cluster a una lista.
 
-<<echo=true>>=
-data <- c(1:10)
-list <- toList(data)
-clusters <- c(1,2)
-newCluster(list,clusters)
-@
+\begin{Schunk}
+\begin{Sinput}
+> data <- c(1:10)
+> list <- toList(data)
+> clusters <- c(1,2)
+> newCluster(list,clusters)
+\end{Sinput}
+\begin{Soutput}
+[[1]]
+     [,1] [,2] [,3]
+[1,]    1    2    0
+
+[[2]]
+     [,1] [,2] [,3]
+[1,]    3    4    0
+
+[[3]]
+     [,1] [,2] [,3]
+[1,]    5    6    1
+
+[[4]]
+     [,1] [,2] [,3]
+[1,]    7    8    1
+
+[[5]]
+     [,1] [,2] [,3]
+[1,]    9   10    1
+
+[[6]]
+     [,1] [,2] [,3]
+[1,]    1    2    1
+[2,]    3    4    1
+\end{Soutput}
+\end{Schunk}
 
 \section{Conclusiones}
 En esta práctica, se han realizado análisis de clasificación no supervisada de datos con R, aplicando el
