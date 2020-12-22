@@ -167,7 +167,11 @@ Prueba de funciones del paquete con el enunciado del ejercicio
 del primer apartado. (Meter mas funciones y comentar lo que hacen)
 
 \subsection {Función AgglomerativeHC}
-**** EXPLICAR ****
+Esta función ejecuta el algoritmo de agrupamiento jerárquico especificando la distancia y 
+tipo de acercamiento. 
+El algoritmo convierte los datos que creamos en un objeto, crea los clusters y calcula una matriz de
+distancias con los clusters creados aplicando la distancia y acercamiento inidcados a la función. Agrupa los 
+clusters en uno nuevo y repite el mismo proceso hasta que existe un único cluster.
 <<echo=true>>=
 matriz<-matrix(c(4,4,3,5,1,2,5,5,0,1,2,2,4,5,2,1),2,8)
 agglomerativeHC(matriz,'EUC','MAX')
@@ -180,8 +184,62 @@ lista<-toList(matriz)
   \includegraphics[width=200px,keepaspectratio]{./images/grafica1.png}
 \end{figure}
 
+\subsection {Función getCluster}
+Esta función forma parte del método de agrupamiento jerárquico.
+Usando el valor distancia que le pasamos a la función, la función obtiene el cluster con la menor
+distancia. 
+<<echo=true>>=
+distance = 3
+
+getCluster(distance,matriz)
+@
+
+\subsection {Función chebyshevDistance}
+Esta función forma parte del método de agrupamiento jerárquico.
+Calcula la distancia de Chebyshev entre dos clusters.
+<<echo=true>>=
+x<-c(1,2,3,4)
+y<-c(5,6,7,8)
+
+matrizX<-matrix(x,ncol=4)
+matrizY<-matrix(y,nclo=4)
+
+chebyshevDistance(x,y)
+chebyshevDistance(matrizX,matrizY)
+@
+
+\subsection {Función normalizeWeight}
+Esta función permite normalizar pesos.
+Si el primer parámetro toma valor TRUE, la función convertirá cualquier valor de paso como 
+un valor "[0:1]".
+En caso de que el primer parámetro sea FALSE, la función no hará ningún cambio y los pesos serán
+los mismos. 
+<<echo=true>>=
+datos <- data.frame(matrix(c(1:10),ncol = 2))
+weight1 <- c(6.3,3.2)
+weight2 <- c(4.5,3.0)
+normalizeWeight(TRUE, weight1, datos)
+normalizeWeight(FALSE, weight1, datos)
+normalizeWeight(TRUE, weight2, datos)
+normalizeWeight(FALSE, weight2, datos)
+@
+
+\subsection {Función newCluster}
+Esta función forma parte del método de agrupamiento jerárquico. 
+Crea un cluster a partir de dos clusters dados. Añade el nuevo cluster a una lista.
+
+<<echo=true>>=
+data <- c(1:10)
+list <- toList(data)
+clusters <- c(1,2)
+newCluster(list,clusters)
+@
+
 \section{Conclusiones}
-El lenguaje R trae herramientas potentes que permiten realizar análisis de forma sencilla y eficiente.
-Con ayuda de librerías externas, podemos aplicar estos análisis a casos pragmáticos tales como análisis
-de imágenes, como hemos mostrado en la práctica. 
+En esta práctica, se han realizado análisis de clasificación no supervisada de datos con R, aplicando el
+algoritmo k-means, algortimo de clusterización encargado de agrupar objetos en k grupos basándose en sus
+características.
+También, se ha aplicado y analizado el paquete de R LearnClust, un paquete que contiene funciones que aplican
+algoritmos clásicos del agrupamiento jerárquico además de funciones adicionales que sirve para explicar estos
+algoritmos paso a paso.
 \end{document}
