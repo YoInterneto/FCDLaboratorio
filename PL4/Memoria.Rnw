@@ -155,12 +155,12 @@ library(LearnClust)
 
 A continuación, haremos uso de algunas funciones de este paquete, las cuales son las siguientes:
 
-**** ENUMERAR TODOS LOS PAQUETES **** 
 \begin{enumerate}
 \item AgglomerativeHC
-\item 
-\item
-\item
+\item getCluster
+\item chebyshevDistance
+\item normalizeWeight
+\item newCluster
 \end{enumerate}
 
 Prueba de funciones del paquete con el enunciado del ejercicio
@@ -178,7 +178,6 @@ agglomerativeHC(matriz,'EUC','MAX')
 lista<-toList(matriz)
 @
 
-**** INSERTAMOS LA IMAGEN DE LA GRAFICA Y COMENTAR ****
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=200px,keepaspectratio]{./images/grafica1.png}
