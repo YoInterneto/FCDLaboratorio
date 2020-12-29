@@ -14,7 +14,7 @@
 \SweaveOpts{concordance=TRUE, cache=TRUE}
 
 \begin{abstract}
- En el siguiente documento se presentan los resultadostrucción de árboles de deci
+En el siguiente documento se presentan los resultados y la solución de la PECL5 del laboratorio de Fundamentos de la Ciencia de los Datos. En esta práctica utilizaremos R para realizar análisis de detección de datos anómalos de una muestra utilizando los distintos métodos estudiados en teoría.
 \end{abstract}
 
 \newpage
@@ -23,335 +23,205 @@
 
 \newpage
 
-\section{Introducción}
-La práctica consta de dos partes:
-
-En la primera parte se reaejercicio que contenga modifi
-
-
 \section{Ejercicio 1 - Análisis de detección de datos anómalos} 
-Utilizaremos las librerías tree y rpart para realizar la clasificación de los datos de las calificaciones de los alumnos en distintas partes de la asignatura (teoria, lab, práctica).
-Realizaremos el análisis con ambas librerías y contrastaremos los resultados obtenidos.
+
+\subsection{Introducción}
+Este primer ejercicio consiste en la realización de cuatro apartados distintos en los que se realizará un análisis de detección de datos anómalos con R. Para la realización de estos apartados, se nos proporcionan dos muestras distintas, una primera que contiene valores de resistencia y densidad de distintos tipos de hormigón y una segunda, que está formada por calificaciones de estudiantes. 
+
+\begin{enumerate}
+\item Análisis sobre medidas de ordenación (resistencia -  muestra1).
+\item Análisis sobre medidas de dispersión (densidad - muestra1).
+\item Análisis sobre regresión de las variables (densidad/resistencia - muestra1)
+\item Análisis mediante algoritmo K-vecinos (muestra2)
+\end{enumerate}
+
 
 \subsection{Apartado 1 - Detección de datos anómalos. Medidas de ordenación}
+En este primer apartado se realiza un análisis de detección de datos anómalos utilizando medidas de ordenación, método de caja y bigotes, sobre el valor de resistencia, para los diferentes tipos de hormigón que aparecen en la muestra1. 
 
-En este ejercicio, empleamos el algoritmo K-vecinos para analizar la misma muestra
-de calificaciones empleada en clase.
-El algoritmo es tan sencillo que no necesitaremos usar ninguna librería;
-simplemente lo programaremos.
-Emplearemos un valor de $K = 4$ y un grado de outlier $d = 2.5$.
-
-Primero, cargamos la muestra data en la variable \texttt{muestra}.
+Cargamos primeramente los datos de la muestra1 que serán necesarios para la realización del primer apartado:
 
 <<>>=
-muestra <- matrix(c(4, 4, 4, 3, 5, 5, 1, 1, 5, 4), 2,5)
-muestra <- t(muestra)
-@
-
-A continuación, creamos una matriz que almacene las distancias entre puntos
-de la muestra y ordenamos las distancias de menor a mayor.
-
-<<>>=
-distancias <- as.matrix(dist(muestra))
-distancias <- matrix(distancias, 5, 5)
-
-for(i in 1:5){
-    distancias[,i] = sort(distancias[,i])
-}
-
-distanciasOrdenadas <- distancias
-@
-
-Con esto, ya podemos distinguir datos anómalos:
-Consideraremos un dato anómalo cualquier dato cuyo vecino $K$ esté a una
-distancia mayor que el grado de outlier $d$.
-En nuestro caso, será anómalo cualquier valor superior cuyo vecino $K = 4$ esté
-a una distancia mayor que $d = 2.5$.
-
-<<>>=
-for(i in 1:5){
-    if(distanciasOrdenadas[4,i] > 2.5) {
-        cat("[", i, "] es un suceso anomalo o outlier\n")
-    }
-}
-@
-\subsection{Apartado 2 - Detección de datos anómalos. Medidas de dispersión}
-En este ejercicio, empleamos medidas de ordenación, método de caja y bigotes,
-para la detección de datos anómalos sobre la resistencia de la muestra
-de tipos de hormigón vista en clase.
-
-Primero, cargamos en la variable \texttt{muestra} los datos de la muestra.
-
-<<>>=
-muestra <- t(matrix(c(3, 2, 3.5, 12, 4.7, 4.1, 5.2, 4.9, 7.1,
+#Cargamos los datos
+muestra1 <- t(matrix(c(3, 2, 3.5, 12, 4.7, 4.1, 5.2, 4.9, 7.1,
                       6.1, 6.2, 5.2, 14, 5.3), 2, 7, 
-                    dimnames = list(c("r","s"))))
+                    dimnames = list(c("r","d"))))
 
-muestra = data.frame(muestra)
+muestra1 = data.frame(muestra1)
+muestra1
 @
 
-La función \texttt{boxplot} nos permite mostrar en pantalla, entre otros datos,
-los outliers de una muestra según el método de caja y bigotes.
-Normalmente, esta función también dibuja un plot, pero podemos desactivar esa
-funcionalidad.
-
-A continuación, empleamos dicha función para identificar datos anómalos por este método.
+Para mostrar los datos de los outliers de una muestra por pantalla utilizando el método de caja y bigotes utilizaremos la función de R \textit{boxplot} que además de mostrarnos el método caja y bigotes tiene una opción, la cual se puede desactivar, para mostrar un plot.
 
 <<>>=
-boxplot(muestra$r, range=1.5, plot = FALSE)
+#Utilizamos la función quitando la generación del plot y mostramos
+boxplot(muestra1$r, range=1.5, plot = FALSE)
 @
 
-Esta función, en cambio, no nos permite obtener dichos outliers como variables.
-Por tanto, implementaremos también el algoritmo de caja y bigotes.
+La función \textit{boxplot}, como podemos ver, únicamente nos muestra la información del análisis de los datos anómalos, por ello a continuación, implementaremos de otro modo el método de caja bigotes.
 
-Primero, calculamos los cuartiles de la muestra.
-
-<<>>=
-q1 <- quantile(muestra$r, 0.25)
-q3 <- quantile(muestra$r, 0.75)
-@
-
-Ahora calculamos el intervalo de valores que consideramos normales.
+Primero hallaremos los cuartiles (q1, q3) de la muestra1, para poder luego poder calcular el intervalo de datos que consideramos normales, es decir, el intervalo de datos no anómalos
 
 <<>>=
+#Calculamos los cuartiles
+q1 <- quantile(muestra1$r, 0.25)
+q3 <- quantile(muestra1$r, 0.75)
+#Calculamos el intervalo de valores normales
 s = 1.5
 intervalo <- c(q1 - s * (q3 - q1), q1 + s*(q3-q1))
+intervalo
 @
 
-Finalmente, identificamos los datos que se encuentran fuera del intervalo.
+Una vez realizado lo anterior y teniendo el intervalo de valores normales, recorreremos todos los valores de la muestra y comprobaremos cuáles de esos valores son datos anómalos y cuáles no lo son, es decir, cuales están dentro, o no, del intervalo.
 
 <<>>=
-for (i in 1:length(muestra$r))
+for (i in 1:length(muestra1$r))
 {
-    # si se sale del intervalo, es un outlayer
-    if(muestra$r[i] < intervalo[1] || muestra$r[i] > intervalo[2])
+    if(muestra1$r[i] < intervalo[1] || muestra1$r[i] > intervalo[2])
     {
-        cat("El dato", muestra$r[i], "es un outlayer.")
-    }
-
-}
-@
-\subsection{Apartado 3 - Detección de datos anómalos. Regresion}
-
-En este ejercicio, empleamos medidas de dispersión, desviación típica,
-para determinar datos anómalos sobre la misma muestra del ejercicio anterior.
-
-Empezamos cargando en una variable la muestra.
-
-<<>>=
-muestra <- t(matrix(c(3, 2, 3.5, 12, 4.7, 4.1, 5.2, 4.9, 7.1, 
-6.1, 6.2, 5.2, 14, 5.3), 2, 7, dimnames=list(c("r", "d"))))
-muestra <- data.frame(muestra)
-@
-
-Ahora calculamos el intervalo de datos normales usando la desviación típica.
-
-<<>>=
-intDesv <- c(mean(muestra$d) - 2*sd(muestra$d), mean(muestra$d) + 2*sd(muestra$d))
-sdd <- sqrt(var(muestra$d) * (length(muestra$d)-1 / length(muestra$d)))
-@
-
-Finalmente, comprobamos en bucle que los sucesos se encuentren dentro del intervalo definido.
-
-<<>>=
-for(i in 1:length(muestra$d)){
-    # Si estan fuera del rango, imprimimos el suceso por pantalla
-    if(muestra$d[i] < intDesv [1] || muestra$d[i] > intDesv [2]) {
-        cat("El suceso [" , i, "] = ", muestra$d[i] ,
-         "es un suceso anomalo o outlier\n")
+        cat("DATO - [", muestra1$r[i], "] es anómalo.\n")
     }
 }
 @
 
-\subsection{Apartado 4 - Detección de datos anómalos. Algoritmo K-vecinos}
+Como vemos, a diferencia del \textit{boxplot}, con este algoritmo podemos obtener todos los valores anómalos como una variable para, en caso de necesitarlo, poder trabajar con ellos.
 
-En este ejercicio, empleamos un modelo de regresión para identificar datos anómalos
-sobre las densidades de la muestra usada en el anterior ejercicio, utilizando error
-estándar de los residuos.
+\subsection{Apartado 2 - Detección de datos anómalos. Medidas de dispersión}
+En este apartado realizamos un análisis de detección de datos anómalos utilizando medidas de dispersión sobre la densidad, desviación típica, de la muestra1. 
 
-Primero cargamos en una variable la muestra.
+Usamos la variable muestra1 creada en el apartado anterior y usamos la desviación típica para calcular los intervalos de datos normales. 
 
 <<>>=
-muestra <- t(matrix(c(3,2,3.5,12,4.7,4.1,5.2,4.9,7.1,
-6.1,6.2,5.2,4,5.3), 2, 7, dimnames = list(c("r","d"))))
-
-muestra = data.frame(muestra)
+intervalo <- c(mean(muestra1$d) - 2*sd(muestra1$d), mean(muestra1$d) + 2*sd(muestra1$d))
+intervalo
+#sdd <- sqrt(var(muestra1$d) * (length(muestra1$d)-1 / length(muestra1$d)))
 @
 
-Calculamos ahora la regresión de la muestra y extraemos los residuos.
+Se comprueba que valores se encuentran dentro del intervalo especificado para determinar cuales son datos anómalos. 
 
 <<>>=
-regresion = lm(muestra$d~muestra$r)
+for(i in 1:length(muestra1$d)){
+    if(muestra1$d[i] < intervalo[1] || muestra1$d[i] > intervalo[2]) {
+cat("DATO - [", muestra1$d[i], "] es anómalo.\n")
+    }
+}
+@
 
+\subsection{Apartado 3 - Detección de datos anómalos. Regresión}
+Para el tercer apartado realizaremos un análisis de detección de datos anómalos sobre la regresión de las variables densidad en función de resistencia, utilizando, para ello, el error estándar de los residuos sobre la muestra1.
+
+Cómo utilizamos la muestra1, y esta ya está definida en el primer apartado, no hace falta volver a definirla de nuevo. Sobre esta muestra, calculamos la regresión y extraemos los residuos.
+
+<<>>=
+#Calculamos la regresión
+regresion = lm(muestra1$d~muestra1$r)
+regresion
+#Calculamos el residuo
 residuos = summary(regresion)$residuals
-print(residuos)
+residuos
 @
 
-Calculamos ahora el error estándar, en función de los residuos.
+A continuación, calculamos el error estándar en función de la densidad y los residuos calculados anteriormente:
 
 <<>>=
-error_estandar = sqrt(sum(residuos**2)/length(muestra$d))
+#Calculamos el error
+error = sqrt(sum(residuos**2)/length(muestra1$d))
+error
 @
 
 Finalmente, identificamos como anómalos los datos cuyo valor absoluto supere
 el rango correspondiente al grado de outlier $d = 1.5$.
+Finalmente, para obtener los datos anómalos, identificamos qué datos tienen un valor absoluto superior al rango que corresponde al grado de outlier.
 
 <<>>=
-grado_outlier = 1.5
-
-dsr = grado_outlier * error_estandar
+grado = 1.5
+dsr = grado_outlier * error
 
 for (i in 1:length(muestra$r))
 {
     if(abs(residuos[i]) > dsr)
     {
-        cat("El dato", muestra$d[i], "es un outlayer. \n")
+        cat("DATO - [", muestra1$d[i], "] es anómalo.\n")
     }
 }
 @
 
-\section{Ejercicio 2 - Análisis de detección de datos anómalos. Metodos de teoria} 
+\subsection{Apartado 4 - Detección de datos anómalos. Algoritmo K-vecinos}
+En este apartado utilizaremos el algoritmo K-vecinos para la detección de los datos anómalos de la muestra de datos de las calificaciones. 
 
-Presentamos en este apartado dos enunciados desarrollados por nosotros y sus soluciones.
+Utilizaremos un valor de K = 4 y un grado de outlier d = 2.5.
 
-
-\subsection{Apartado 1 - Árboles de decisión. Algoritmo Hunt}
-
-En este ejercicio usamos un modelo multivariante para identificar outliers en una muestra.
-En concreto, creamos un modelo de regresión y usamos un criterio basado en distancia de Cook
-para determinar qué datos son anómalos.
-
-Primero cargamos la muestra.
+Primero, cargamos nuestros datos en la variable \textit{calificaciones}.
 
 <<>>=
-url <- "https://raw.githubusercontent.com/selva86/datasets/master/ozone.csv" 
-ozono <- read.csv(url)  # Leemos el csv desde una URL
+#Cargamos las calificaciones
+calificaciones <- matrix(c(4, 4, 4, 3, 5, 5, 1, 1, 5, 4), 2,5)
+calificaciones <- t(calificaciones )
+calificaciones
 @
 
-Construímos ahora el modelo de regresión, y calculamos las distancias de Cook entre los puntos.
-Además, identificamos la distancia máxima de un dato normal.
+A continuación, crearemos una matriz con las distancias entre los puntos de la muestra y la ordenaremos de forma ascendente.
 
 <<>>=
-modelo <- lm(ozone_reading~., data=ozono)
-distancia_cooks <- cooks.distance(modelo)
-valor_maximo <- 4*mean(distancia_cooks, na.rm=T)
-@
+#Distancias sin ordenar
+distancias <- as.matrix(dist(calificaciones ))
+distancias <- matrix(distancias, 5, 5)
+distancias
 
-Con esto, podemos dibujar un plot que separe los datos anómalos de los normales.
-
-<<>>=
-plot(distancia_cooks, pch="*", cex=2, 
-# Pintamos la distancia de cooks
-main="Estudio de valores anómalos con la distancia de Cooks")  
-# Pintamos la linea que separa los datos normales de los outliers
-abline(h = valor_maximo, col="red")  
-text(x=1:length(distancia_cooks)+1, y=distancia_cooks, 
-labels=ifelse(distancia_cooks>valor_maximo,
-names(distancia_cooks),""), col="red")  
-# Añadimos etiquetas para identificar los outliers
-@
-
-Mediante el criterio de la distancia de Cook, identificamos los valores anómalos
-individualmente y mostramos una lista de ellos.
-
-<<>>=
-outliers <- list() # Creamos la lista para almacenar los outliers
-
-for(i in 1:length(distancia_cooks)){
-    if(distancia_cooks[i] > valor_maximo) { 
-        # Si los datos estan fuera del rango de valores normales
-        outliers <- append(outliers, i) # Se añaden a la lista de anomalos
-    }
+for(i in 1:5){
+    distancias[,i] = sort(distancias[,i])
 }
 
-matriz <- matrix(unlist(outliers))
-cat("Los datos outliers son:\n")
-cat(matriz, sep =', ')
-cat("\n")
+#Distancias ordenadas
+distanciasOrdenadas <- distancias
+distanciasOrdenadas
 @
 
-Y genera el siguiente gráfico:
-
-\begin{figure}[!htbp]
-  \centering
-  \includegraphics[width=200px,keepaspectratio]{./cooks.png}
-  \caption{Gráfico de valores anómalos}
-  \label{fig:cooks-anomalo}
-\end{figure}
-
-\subsection{Apartado 2 - Análisis de regresión lineal}
-En este ejercicio se emplea aprendizaje mediante K-vecinos-próximos (K-nearest-neighbours)
-para clasificar una muestra; en este caso, datos de flores del dataset \texttt{iris}.
-
-Para esto, empleamos la librería \texttt{kknn}, que realiza clasificación de usando un training set.
+Una vez hecho esto, ya podemos saber qué datos son anómalos:
+Consideraremos un dato anómalo cualquier dato su vecino K esté a una
+distancia mayor que el grado de outlier d.
+Cualquier valor cuyo vecino K = 4 esté a una distancia mayor que d = 2.5 será considerado anómalo.
 
 <<>>=
-# install.packages("kknn")
-library(kknn)
+for(i in 1:5){
+    if(distanciasOrdenadas[4,i] > 2.5) {
+        cat("[", i, "] es un outlier\n")
+    }
+}
 @
 
-Cargamos el data set y la muestra.
+###########################################################################################################################################################################################################################
 
+\section{Ejercicio 2 - Análisis de detección de datos anómalos} 
+
+
+
+\section {Ejercicio 3}
 <<>>=
-Data<-iris
+#Instalamos el paquete dbscan
+install.packages ("dbscan")
 
-Muestra <- sample(1:150, 50)
+#Cargamos el paquete
+library(dbscan)
+
+#Cargamos los datos de la muestra
+calificaciones<- matrix(c(4, 4, 4, 3, 5, 5, 1, 1, 5, 4), 2,5)
+calificaciones<- t(calificaciones)
+calificaciones
+
+#Calculamos el factor de outlier de cada valor de la muestra con la funcion lof con k=3
+lof <- lof(calificaciones, k=3)
+lof
+
+# Resumen sobre los factores de outlier (minimo, 1er qu, mediana, media, 3rd qu, max)
+summary(lof)
+
+#Representacion gráfica de los factores de outlier de cada dato
+plot(calificaciones, pch = "*", main = "LOF (k=3)")
+
+#Marcamos con un circulo rojo los datos que consideramos anómalos/outliers
+points(muestra, cex = (lof-1)*3, pch = 1, col="red")
 @
-
-Separamos la muestra en set de test y set de aprendizaje.
-
-<<>>=
-conjunto_test <- Data[Muestra, ]
-
-conjunto_aprendizaje <- Data[-Muestra, ]
-@
-
-Ejecutamos el algoritmo y entrenamos el modelo.
-
-<<>>=
-modelo <- train.kknn(Species ~ ., data = conjunto_aprendizaje, kmax = 9)
-@
-
-Finalmente, evaluamos el modelo en el conjunto de test y comprobamos cómo rinde.
-
-<<>>=
-resultado_prediccion <- predict(modelo, conjunto_test[, -5])
-
-# Matriz de confusión
-matriz_confusion <- table(conjunto_test[, 5], resultado_prediccion)
-print(matriz_confusion)
-
-# Precisión
-acierto <- (sum(diag(matriz_confusion)))/sum(matriz_confusion)
-cat("Acierto: ", acierto, "\n")
-
-# Error
-error <- 1 - acierto
-cat("Error: ", error, "\n")
-
-# Calidad de la clasificación en función del nº de vecinos
-plot(modelo)
-@
-
-Y obtenemos el siguiente gráfico del modelo:
-
-\begin{figure}[!htbp]
-  \centering
-  \includegraphics[width=200px,keepaspectratio]{./kvecinosprox.png}
-  \caption{Gráfico de modelo}
-  \label{fig:kvecinosprox-modelo}
-\end{figure}
-
-\section{Ejercicio 3 - Análisis de detección de datos anómalos. Algoritmo LOF} 
-
-Para este segundo ejercicio se deben realizar los mismo cálculos que para el ejercicio 1, pero con otras muestras y cambiando la forma en la que se calculan los resultados.
-Las muestras utilizadas para este ejercicio serán “muestra1.txt” y “muestra2.txt”.
-
-\subsection{Apartado 1 - Árboles de decisión. Algoritmo Hunt}
-
-Para el primer apartado, a partir de una muestra con datos sobre las características de los vehículos, se pide realizar un análisis de clasificación de los datos sobre el atributo TipoVehiculo.
-
-La clasificación se realizará a partir de los siguientes atributos, sie
 
 
 \clearpage
