@@ -35,258 +35,312 @@ Realizaremos el análisis con ambas librerías y contrastaremos los resultados o
 
 \subsection{Apartado 1 - Detección de datos anómalos. Medidas de ordenación}
 
-En el primer apartado, se pide que, a partir de la muestra de las calificaciones de distintos alumnos “calificacionesMuestra.txt”, se obtenga la función de clasificación, utilizando para ellos, la medida de impureza Gini. 
+En este ejercicio, empleamos el algoritmo K-vecinos para analizar la misma muestra
+de calificaciones empleada en clase.
+El algoritmo es tan sencillo que no necesitaremos usar ninguna librería;
+simplemente lo programaremos.
+Emplearemos un valor de $K = 4$ y un grado de outlier $d = 2.5$.
 
-La clasificación se realizará a partir de los siguientes atributos, siendo calificación el atributo clasificador:
-\begin{enumerate}
-\item Teoría
-\item Laboratorio
-\item Práctica
-\item Calificación
-\end{enumerate}
+Primero, cargamos la muestra data en la variable \texttt{muestra}.
 
-A continuación, mostramos la tabla con los datos:
-
-<<>>==
-# Primero leemos los datos.
-calificaciones <- read.table("./data/calificacionesMuestra.txt")
-muestra <- data.frame(calificaciones)
-#Mostramos la tabla con los datos.
-muestra
+<<>>=
+muestra <- matrix(c(4, 4, 4, 3, 5, 5, 1, 1, 5, 4), 2,5)
+muestra <- t(muestra)
 @
 
-Para poder realizar el análisis cargamos la librería \textit{rpart}
+A continuación, creamos una matriz que almacene las distancias entre puntos
+de la muestra y ordenamos las distancias de menor a mayor.
 
-<<>>==
-# Cargamos la librería necesaria.
-library('rpart')
+<<>>=
+distancias <- as.matrix(dist(muestra))
+distancias <- matrix(distancias, 5, 5)
+
+for(i in 1:5){
+    distancias[,i] = sort(distancias[,i])
+}
+
+distanciasOrdenadas <- distancias
 @
 
-La librería rpart, por defecto, hace uso de la medida de impureza Gini con lo cual no hace falta modificar la llamada a esta para generar el árbol de decisión utilizando Gini, tal y como se pide en el enunciado.
+Con esto, ya podemos distinguir datos anómalos:
+Consideraremos un dato anómalo cualquier dato cuyo vecino $K$ esté a una
+distancia mayor que el grado de outlier $d$.
+En nuestro caso, será anómalo cualquier valor superior cuyo vecino $K = 4$ esté
+a una distancia mayor que $d = 2.5$.
 
-\subsubsection{Librería rpart}
-
-<<echo=true>>= 
-clasificacionRpart <- rpart(Calificacion~., data=muestra, method="class", minsplit=1)
-#Mostramos el resultado
-print(clasificacionRpart)
+<<>>=
+for(i in 1:5){
+    if(distanciasOrdenadas[4,i] > 2.5) {
+        cat("[", i, "] es un suceso anomalo o outlier\n")
+    }
+}
 @
-
-Como podemos observar la clasificación utilizando la librería rpart se realiza de forma correcta. La forma de mostrar el resultado no es muy gráfica pero es correcta.
-
 \subsection{Apartado 2 - Detección de datos anómalos. Medidas de dispersión}
+En este ejercicio, empleamos medidas de ordenación, método de caja y bigotes,
+para la detección de datos anómalos sobre la resistencia de la muestra
+de tipos de hormigón vista en clase.
 
-Para este apartado, se pide que se realice un análisis de regresión lineal a partir de la muestra de los planetas “planetasMuestra.txt”.
+Primero, cargamos en la variable \texttt{muestra} los datos de la muestra.
 
-<<echo=true>>= 
-# Leemos y mostramos los datos
-planetas <- read.table("./data/planetasMuestra.txt")
-planetas
+<<>>=
+muestra <- t(matrix(c(3, 2, 3.5, 12, 4.7, 4.1, 5.2, 4.9, 7.1,
+                      6.1, 6.2, 5.2, 14, 5.3), 2, 7, 
+                    dimnames = list(c("r","s"))))
+
+muestra = data.frame(muestra)
 @
 
-Una vez cargados los datos pasamos a realizar el análisis de regresión, para ello obtendremos los coeficientes asociados entre la densidad (D) y el radio (R) de cada planeta.
+La función \texttt{boxplot} nos permite mostrar en pantalla, entre otros datos,
+los outliers de una muestra según el método de caja y bigotes.
+Normalmente, esta función también dibuja un plot, pero podemos desactivar esa
+funcionalidad.
 
-<<echo=true>>= 
-# Calculamos la regresión
-regresion = lm(D~R, data=planetas)
-print(regresion)
+A continuación, empleamos dicha función para identificar datos anómalos por este método.
+
+<<>>=
+boxplot(muestra$r, range=1.5, plot = FALSE)
 @
 
-Analizamos los resultados obtenidos en la regresión. Podemos observar que la recta de regresión que obtenemos (0.1394) es bastante mala ya que no se acerca nada a 1. La conclusión que sacamos es que no existe una correlación clara entre estas dos propiedades de los planetas ya que, por ejemplo, podemos observar que hay planetas como Mercurio con un radio muy pequeño (2.4) y otros mucho más grandes como Venus (R = 6.1), y sin embargo ambos tienen una densidad muy parecida (5.4 y 5.2, respectivamente).
+Esta función, en cambio, no nos permite obtener dichos outliers como variables.
+Por tanto, implementaremos también el algoritmo de caja y bigotes.
 
+Primero, calculamos los cuartiles de la muestra.
+
+<<>>=
+q1 <- quantile(muestra$r, 0.25)
+q3 <- quantile(muestra$r, 0.75)
+@
+
+Ahora calculamos el intervalo de valores que consideramos normales.
+
+<<>>=
+s = 1.5
+intervalo <- c(q1 - s * (q3 - q1), q1 + s*(q3-q1))
+@
+
+Finalmente, identificamos los datos que se encuentran fuera del intervalo.
+
+<<>>=
+for (i in 1:length(muestra$r))
+{
+    # si se sale del intervalo, es un outlayer
+    if(muestra$r[i] < intervalo[1] || muestra$r[i] > intervalo[2])
+    {
+        cat("El dato", muestra$r[i], "es un outlayer.")
+    }
+
+}
+@
 \subsection{Apartado 3 - Detección de datos anómalos. Regresion}
 
-Para este apartado, se pide que se realice un análisis de regresión lineal a partir de la muestra de los planetas “planetasMuestra.txt”.
+En este ejercicio, empleamos medidas de dispersión, desviación típica,
+para determinar datos anómalos sobre la misma muestra del ejercicio anterior.
 
-<<echo=true>>= 
-# Leemos y mostramos los datos
-planetas <- read.table("./data/planetasMuestra.txt")
-planetas
+Empezamos cargando en una variable la muestra.
+
+<<>>=
+muestra <- t(matrix(c(3, 2, 3.5, 12, 4.7, 4.1, 5.2, 4.9, 7.1, 
+6.1, 6.2, 5.2, 14, 5.3), 2, 7, dimnames=list(c("r", "d"))))
+muestra <- data.frame(muestra)
 @
 
-Una vez cargados los datos pasamos a realizar el análisis de regresión, para ello obtendremos los coeficientes asociados entre la densidad (D) y el radio (R) de cada planeta.
+Ahora calculamos el intervalo de datos normales usando la desviación típica.
 
-<<echo=true>>= 
-# Calculamos la regresión
-regresion = lm(D~R, data=planetas)
-print(regresion)
+<<>>=
+intDesv <- c(mean(muestra$d) - 2*sd(muestra$d), mean(muestra$d) + 2*sd(muestra$d))
+sdd <- sqrt(var(muestra$d) * (length(muestra$d)-1 / length(muestra$d)))
 @
 
-\subsection{Apartado 5 - Detección de datos anómalos. Algoritmo K-vecinos}
+Finalmente, comprobamos en bucle que los sucesos se encuentren dentro del intervalo definido.
 
-Para este apartado, se pide que se realice un análisis de regresión lineal a partir de la muestra de los planetas “planetasMuestra.txt”.
-
-<<echo=true>>= 
-# Leemos y mostramos los datos
-planetas <- read.table("./data/planetasMuestra.txt")
-planetas
+<<>>=
+for(i in 1:length(muestra$d)){
+    # Si estan fuera del rango, imprimimos el suceso por pantalla
+    if(muestra$d[i] < intDesv [1] || muestra$d[i] > intDesv [2]) {
+        cat("El suceso [" , i, "] = ", muestra$d[i] ,
+         "es un suceso anomalo o outlier\n")
+    }
+}
 @
 
-Una vez cargados los datos pasamos a realizar el análisis de regresión, para ello obtendremos los coeficientes asociados entre la densidad (D) y el radio (R) de cada planeta.
+\subsection{Apartado 4 - Detección de datos anómalos. Algoritmo K-vecinos}
 
-<<echo=true>>= 
-# Calculamos la regresión
-regresion = lm(D~R, data=planetas)
-print(regresion)
+En este ejercicio, empleamos un modelo de regresión para identificar datos anómalos
+sobre las densidades de la muestra usada en el anterior ejercicio, utilizando error
+estándar de los residuos.
+
+Primero cargamos en una variable la muestra.
+
+<<>>=
+muestra <- t(matrix(c(3,2,3.5,12,4.7,4.1,5.2,4.9,7.1,
+6.1,6.2,5.2,4,5.3), 2, 7, dimnames = list(c("r","d"))))
+
+muestra = data.frame(muestra)
+@
+
+Calculamos ahora la regresión de la muestra y extraemos los residuos.
+
+<<>>=
+regresion = lm(muestra$d~muestra$r)
+
+residuos = summary(regresion)$residuals
+print(residuos)
+@
+
+Calculamos ahora el error estándar, en función de los residuos.
+
+<<>>=
+error_estandar = sqrt(sum(residuos**2)/length(muestra$d))
+@
+
+Finalmente, identificamos como anómalos los datos cuyo valor absoluto supere
+el rango correspondiente al grado de outlier $d = 1.5$.
+
+<<>>=
+grado_outlier = 1.5
+
+dsr = grado_outlier * error_estandar
+
+for (i in 1:length(muestra$r))
+{
+    if(abs(residuos[i]) > dsr)
+    {
+        cat("El dato", muestra$d[i], "es un outlayer. \n")
+    }
+}
 @
 
 \section{Ejercicio 2 - Análisis de detección de datos anómalos. Metodos de teoria} 
 
-Para este segundo ejercicio se deben realizar los mismo cálculos que para el ejercicio 1, pero con otras muestras y cambiando la forma en la que se calculan los resultados.
-Las muestras utilizadas para este ejercicio serán “muestra1.txt” y “muestra2.txt”.
+Presentamos en este apartado dos enunciados desarrollados por nosotros y sus soluciones.
+
 
 \subsection{Apartado 1 - Árboles de decisión. Algoritmo Hunt}
 
-Para el primer apartado, a partir de una muestra con datos sobre las características de los vehículos, se pide realizar un análisis de clasificación de los datos sobre el atributo TipoVehiculo.
+En este ejercicio usamos un modelo multivariante para identificar outliers en una muestra.
+En concreto, creamos un modelo de regresión y usamos un criterio basado en distancia de Cook
+para determinar qué datos son anómalos.
 
-La clasificación se realizará a partir de los siguientes atributos, siendo calificación el atributo clasificador tipo vehículos:
-\begin{enumerate}
-\item Tipo carnet
-\item Número de ruedas
-\item Número de pasajeros
-\item Tipo vehículo
-\end{enumerate}
+Primero cargamos la muestra.
 
-<<echo=true>>= 
-# Leemos los datos de la primera muestra
-datos <- read.table("./data/muestra1.txt")
-muestra1 <- data.frame(datos)
-# Mostramos la tabla
-muestra1
+<<>>=
+url <- "https://raw.githubusercontent.com/selva86/datasets/master/ozone.csv" 
+ozono <- read.csv(url)  # Leemos el csv desde una URL
 @
 
-<<echo=true>>= 
-# Realizamos y mostramos la clasificación de los datos en función del campo TipoVehiculo
-clasificacion <- rpart(TipoVehiculo~., data=muestra1, method="class", minsplit=1)
-print(clasificacion)
+Construímos ahora el modelo de regresión, y calculamos las distancias de Cook entre los puntos.
+Además, identificamos la distancia máxima de un dato normal.
+
+<<>>=
+modelo <- lm(ozone_reading~., data=ozono)
+distancia_cooks <- cooks.distance(modelo)
+valor_maximo <- 4*mean(distancia_cooks, na.rm=T)
 @
 
-Para poder realizar la visualización de los datos utilizamos la herramienta \textit{plot}
+Con esto, podemos dibujar un plot que separe los datos anómalos de los normales.
 
-<<echo=true>>= 
-plot(clasificacion, uniform=TRUE, main="Arbol de clasificacion vehiculos") 
-text(clasificacion, use.n=TRUE, all=TRUE, cex=.7, fancy=TRUE, fwidth=0.5, fheight=0.7)
+<<>>=
+plot(distancia_cooks, pch="*", cex=2, 
+# Pintamos la distancia de cooks
+main="Estudio de valores anómalos con la distancia de Cooks")  
+# Pintamos la linea que separa los datos normales de los outliers
+abline(h = valor_maximo, col="red")  
+text(x=1:length(distancia_cooks)+1, y=distancia_cooks, 
+labels=ifelse(distancia_cooks>valor_maximo,
+names(distancia_cooks),""), col="red")  
+# Añadimos etiquetas para identificar los outliers
 @
+
+Mediante el criterio de la distancia de Cook, identificamos los valores anómalos
+individualmente y mostramos una lista de ellos.
+
+<<>>=
+outliers <- list() # Creamos la lista para almacenar los outliers
+
+for(i in 1:length(distancia_cooks)){
+    if(distancia_cooks[i] > valor_maximo) { 
+        # Si los datos estan fuera del rango de valores normales
+        outliers <- append(outliers, i) # Se añaden a la lista de anomalos
+    }
+}
+
+matriz <- matrix(unlist(outliers))
+cat("Los datos outliers son:\n")
+cat(matriz, sep =', ')
+cat("\n")
+@
+
+Y genera el siguiente gráfico:
 
 \begin{figure}[!htbp]
   \centering
-  \includegraphics[width=200px,keepaspectratio]{./arbolVehiculos.png}
-  \caption{Árbol de decisión - Muestra 1}
-  \label{fig:arbol}
+  \includegraphics[width=200px,keepaspectratio]{./cooks.png}
+  \caption{Gráfico de valores anómalos}
+  \label{fig:cooks-anomalo}
 \end{figure}
-
-\newpage
-
-La Figura 1. nos muestra el árbol de decisión construido. Analizándolo, podemos observar que la raíz será el atributo Tipo carnet, el cual ha sido elegido para ser la raíz utilizando la medida de la ganancia de información mediante la medida de impureza Gini. Después, el nodo hijo ha sido el atributo Número de ruedas y el nodo hijo de este, vuelve a ser Número de ruedas. Con estos nodos, ya es suficiente para clasificar todos los datos de la muestra.
 
 \subsection{Apartado 2 - Análisis de regresión lineal}
-Para este apartado, se pide que se realice un análisis de regresión lineal a partir “muestra2.txt”. El archivo de datos muestra2 ha sido generado mediante un script de python el cual genera 40 pares de valores (X, Y) entre 1 y 20, siendo X un número entero e Y un número decimal.
+En este ejercicio se emplea aprendizaje mediante K-vecinos-próximos (K-nearest-neighbours)
+para clasificar una muestra; en este caso, datos de flores del dataset \texttt{iris}.
 
-Para la resolución de este ejercicio dividiremos nuestra muestra en 4 muestras de 10 pares de valores cada una para estudiar la regresión.
+Para esto, empleamos la librería \texttt{kknn}, que realiza clasificación de usando un training set.
 
-<<echo=true>>= 
-# Carga de los datos
-datos <- read.table("./data/muestra2.txt", header=TRUE)
-# Mostramos los datos 
-datos
-# Dividimos nuestra muestra en 4 muestras de menor tamaño
-muestras <- split(datos, factor(sort(rank(row.names(datos))%%4))) 
+<<>>=
+# install.packages("kknn")
+library(kknn)
 @
 
-\subsubsection{Muestra 1}
-Calcularemos la regresión para los datos de la primera muestra.
+Cargamos el data set y la muestra.
 
-<<echo=true>>= 
-# Datos de la primera muestra
-muestras[1]
+<<>>=
+Data<-iris
+
+Muestra <- sample(1:150, 50)
 @
 
-Calculamos la regresión de la siguiente forma:
+Separamos la muestra en set de test y set de aprendizaje.
 
-<<echo=true>>= 
-# Calculamos la regresión de la muestra 1
-regresion1 = lm(Y~X, data=muestras[[1]])
-regresion1
+<<>>=
+conjunto_test <- Data[Muestra, ]
+
+conjunto_aprendizaje <- Data[-Muestra, ]
 @
 
-\subsubsection{Muestra 2}
-Calcularemos la regresión para los datos de la segunda muestra.
+Ejecutamos el algoritmo y entrenamos el modelo.
 
-<<echo=true>>= 
-# Datos de la segunda muestra
-muestras[2]
+<<>>=
+modelo <- train.kknn(Species ~ ., data = conjunto_aprendizaje, kmax = 9)
 @
 
-Calculamos la regresión de la siguiente forma:
+Finalmente, evaluamos el modelo en el conjunto de test y comprobamos cómo rinde.
 
-<<echo=true>>= 
-# Calculamos la regresión de la muestra 2
-regresion2 = lm(Y~X, data=muestras[[2]])
-regresion2
+<<>>=
+resultado_prediccion <- predict(modelo, conjunto_test[, -5])
+
+# Matriz de confusión
+matriz_confusion <- table(conjunto_test[, 5], resultado_prediccion)
+print(matriz_confusion)
+
+# Precisión
+acierto <- (sum(diag(matriz_confusion)))/sum(matriz_confusion)
+cat("Acierto: ", acierto, "\n")
+
+# Error
+error <- 1 - acierto
+cat("Error: ", error, "\n")
+
+# Calidad de la clasificación en función del nº de vecinos
+plot(modelo)
 @
 
-\subsubsection{Muestra 3}
-Calcularemos la regresión para los datos de la tercera muestra.
+Y obtenemos el siguiente gráfico del modelo:
 
-<<echo=true>>= 
-# Datos de la tercera muestra
-muestras[3]
-@
-
-Calculamos la regresión de la siguiente forma:
-
-<<echo=true>>= 
-# Calculamos la regresión de la muestra 3
-regresion3 = lm(Y~X, data=muestras[[3]])
-regresion3
-@
-
-\subsubsection{Muestra 4}
-Calcularemos la regresión para los datos de la cuarta muestra.
-
-<<echo=true>>= 
-# Datos de la segunda muestra
-muestras[4]
-@
-
-Calculamos la regresión de la siguiente forma:
-
-<<echo=true>>= 
-# Calculamos la regresión de la muestra 4
-regresion4 = lm(Y~X, data=muestras[[4]])
-regresion4
-@
-
-Una vez calculada la regresión de las muestras, necesitamos una forma de poder visualizar el resultado, para ello, hemos optado por hacer una figura con las gráficas de regresión de cada una de las muestras.
-
-<<echo=true>>= 
-# Dibujamos las gráficas resultantes de las regresiones de cada muestra
-par(mfrow=c(2,2))
-# Muestra1
-plot(muestras[[1]]$X, muestras[[1]]$Y, main="Muestra 1", xlab="x", ylab="y")
-abline(regresion1, col="blue")
-# Muestra2
-plot(muestras[[2]]$X, muestras[[2]]$Y, main="Muestra 2", xlab="x", ylab="y")
-abline(regresion2, col="red")
-# Muestra3
-plot(muestras[[3]]$X, muestras[[3]]$Y, main="Muestra 3", xlab="x", ylab="y")
-abline(regresion3, col="orange")
-# Muestra4
-plot(muestras[[4]]$X, muestras[[4]]$Y, main="Muestra 4", xlab="x", ylab="y")
-abline(regresion4, col="black")
-mtext(expression(paste(bold("Datos de regresión de las muestras"))),
-         side = 3, line = -2, outer = TRUE)
-@
-
-Generamos los siguientes gráficos:
 \begin{figure}[!htbp]
   \centering
-  \includegraphics[width=200px,keepaspectratio]{./regresion.png}
-  \caption{Cálculo de regresión de las muestras}
-  \label{fig:regresiones}
+  \includegraphics[width=200px,keepaspectratio]{./kvecinosprox.png}
+  \caption{Gráfico de modelo}
+  \label{fig:kvecinosprox-modelo}
 \end{figure}
-
-Analizando los diagramas de dispersión de las cuatro divisiones de la muestra inicial que teníamos, observamos que todas presentan una relación lineal positiva. También podemos decir que la recta de regresión para la muestra 2 es la más representativa y útil de todas las rectas de regresión que hemos obtenido, las cuales presentan una gran dispersión entre la recta y los puntos. Esto seguramente se deba a que los datos usados para este análisis se han generado de forma aleatoria.  
 
 \section{Ejercicio 3 - Análisis de detección de datos anómalos. Algoritmo LOF} 
 
