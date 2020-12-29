@@ -6,7 +6,7 @@
 \usepackage{hyperref}
 
 
-\title{PECL3 - Fundamentos de la ciencia de datos}
+\title{PECL5 - Fundamentos de la ciencia de datos}
 \author{Mario Adán Herrero \and Alberto González Martínez \and Branimir Stefanov Yanev \and Diego Gutiérrez Marco}
 
 \begin{document}
@@ -14,9 +14,7 @@
 \SweaveOpts{concordance=TRUE, cache=TRUE}
 
 \begin{abstract}
-En el siguiente documento se presentan los resultados y solución de la PECL3 del laboratorio de Fundamentos de la Ciencia de Datos.
-Se realizará un análisis de clasificación de los datos utilizando R siguiendo los ejercicios realizados previamente en teoría.
-Para la resolución del ejercicio utilizaremos el algoritmo de construcción de árboles de decisión de Hunt y también realizaremos un análisis de regresión lineal. Los datos calculados se mostrarán en este pdf utilizando las herramientas Sweave y TinyTex/MikTex.
+ En el siguiente documento se presentan los resultadostrucción de árboles de deci
 \end{abstract}
 
 \newpage
@@ -28,16 +26,14 @@ Para la resolución del ejercicio utilizaremos el algoritmo de construcción de 
 \section{Introducción}
 La práctica consta de dos partes:
 
-En la primera parte se realizará un análisis de clasificación de Datos con R. Para esto utilizaremos el algoritmo de construcción de árboles de decisión de Hunt. Además utilizaremos los datos de la muestra para realizar un análisis de regresión lineal.
-
-En la segunda parte, el grupo desarrollará un enunciado, y su posterior solución, de un ejercicio que contenga modificaciones del ejercicio hecho en clase, en el que se realice un análisis de clasificación supervisada con R, así como un análisis de regresión lineal.
+En la primera parte se reaejercicio que contenga modifi
 
 
-\section{Ejercicio 1- Análisis de clasificación de datos. Calificaciones - Planetas} 
+\section{Ejercicio 1 - Análisis de detección de datos anómalos} 
 Utilizaremos las librerías tree y rpart para realizar la clasificación de los datos de las calificaciones de los alumnos en distintas partes de la asignatura (teoria, lab, práctica).
 Realizaremos el análisis con ambas librerías y contrastaremos los resultados obtenidos.
 
-\subsection{Apartado 1 - Árboles de decisión. Algoritmo Hunt}
+\subsection{Apartado 1 - Detección de datos anómalos. Medidas de ordenación}
 
 En el primer apartado, se pide que, a partir de la muestra de las calificaciones de distintos alumnos “calificacionesMuestra.txt”, se obtenga la función de clasificación, utilizando para ellos, la medida de impureza Gini. 
 
@@ -78,7 +74,7 @@ print(clasificacionRpart)
 
 Como podemos observar la clasificación utilizando la librería rpart se realiza de forma correcta. La forma de mostrar el resultado no es muy gráfica pero es correcta.
 
-\subsection{Apartado 2 - Análisis de regresión lineal}
+\subsection{Apartado 2 - Detección de datos anómalos. Medidas de dispersión}
 
 Para este apartado, se pide que se realice un análisis de regresión lineal a partir de la muestra de los planetas “planetasMuestra.txt”.
 
@@ -98,8 +94,43 @@ print(regresion)
 
 Analizamos los resultados obtenidos en la regresión. Podemos observar que la recta de regresión que obtenemos (0.1394) es bastante mala ya que no se acerca nada a 1. La conclusión que sacamos es que no existe una correlación clara entre estas dos propiedades de los planetas ya que, por ejemplo, podemos observar que hay planetas como Mercurio con un radio muy pequeño (2.4) y otros mucho más grandes como Venus (R = 6.1), y sin embargo ambos tienen una densidad muy parecida (5.4 y 5.2, respectivamente).
 
+\subsection{Apartado 3 - Detección de datos anómalos. Regresion}
 
-\section{Ejercicio 2 - Análisis de clasificación de datos. Vehículos - Notas} 
+Para este apartado, se pide que se realice un análisis de regresión lineal a partir de la muestra de los planetas “planetasMuestra.txt”.
+
+<<echo=true>>= 
+# Leemos y mostramos los datos
+planetas <- read.table("./data/planetasMuestra.txt")
+planetas
+@
+
+Una vez cargados los datos pasamos a realizar el análisis de regresión, para ello obtendremos los coeficientes asociados entre la densidad (D) y el radio (R) de cada planeta.
+
+<<echo=true>>= 
+# Calculamos la regresión
+regresion = lm(D~R, data=planetas)
+print(regresion)
+@
+
+\subsection{Apartado 5 - Detección de datos anómalos. Algoritmo K-vecinos}
+
+Para este apartado, se pide que se realice un análisis de regresión lineal a partir de la muestra de los planetas “planetasMuestra.txt”.
+
+<<echo=true>>= 
+# Leemos y mostramos los datos
+planetas <- read.table("./data/planetasMuestra.txt")
+planetas
+@
+
+Una vez cargados los datos pasamos a realizar el análisis de regresión, para ello obtendremos los coeficientes asociados entre la densidad (D) y el radio (R) de cada planeta.
+
+<<echo=true>>= 
+# Calculamos la regresión
+regresion = lm(D~R, data=planetas)
+print(regresion)
+@
+
+\section{Ejercicio 2 - Análisis de detección de datos anómalos. Metodos de teoria} 
 
 Para este segundo ejercicio se deben realizar los mismo cálculos que para el ejercicio 1, pero con otras muestras y cambiando la forma en la que se calculan los resultados.
 Las muestras utilizadas para este ejercicio serán “muestra1.txt” y “muestra2.txt”.
@@ -256,6 +287,18 @@ Generamos los siguientes gráficos:
 \end{figure}
 
 Analizando los diagramas de dispersión de las cuatro divisiones de la muestra inicial que teníamos, observamos que todas presentan una relación lineal positiva. También podemos decir que la recta de regresión para la muestra 2 es la más representativa y útil de todas las rectas de regresión que hemos obtenido, las cuales presentan una gran dispersión entre la recta y los puntos. Esto seguramente se deba a que los datos usados para este análisis se han generado de forma aleatoria.  
+
+\section{Ejercicio 3 - Análisis de detección de datos anómalos. Algoritmo LOF} 
+
+Para este segundo ejercicio se deben realizar los mismo cálculos que para el ejercicio 1, pero con otras muestras y cambiando la forma en la que se calculan los resultados.
+Las muestras utilizadas para este ejercicio serán “muestra1.txt” y “muestra2.txt”.
+
+\subsection{Apartado 1 - Árboles de decisión. Algoritmo Hunt}
+
+Para el primer apartado, a partir de una muestra con datos sobre las características de los vehículos, se pide realizar un análisis de clasificación de los datos sobre el atributo TipoVehiculo.
+
+La clasificación se realizará a partir de los siguientes atributos, sie
+
 
 \clearpage
 
