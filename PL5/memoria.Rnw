@@ -196,36 +196,59 @@ for(i in 1:5){
 
 
 
-\section {Ejercicio 3}
+\section {Ejercicio 3- Análisis de detección de datos anómalos. LOF}
+En este ejercicio utilizaremos el algoritmo LOF (Local Outlier Factor) para determinar los outliers o datos anómalos del siguiente conjunto de datos.
+
+Calificaciones - {Teoria, Laboratorio}
+
+\begin{enumerate}
+\item {4, 4}
+\item {4, 3}
+\item {5, 5}
+\item {1, 1}
+\item {5, 4}
+\end{enumerate}
+
+
+Para la resolución de este ejercicio haremos uso de funciones pertenecientes a un paquete externo llamado \textit{dbscan}. Para ello instalamos el paquete.
 <<>>=
-#Instalamos el paquete dbscan
 install.packages ("dbscan")
+@
 
-#Cargamos el paquete
+Utilizamos el comando /textit{library} para cargar el paquete
+<<>>=
 library(dbscan)
+@
 
-#Cargamos los datos de la muestra
+Cargamos los datos de la muestra de calificaciones
+<<>>=
 calificaciones<- matrix(c(4, 4, 4, 3, 5, 5, 1, 1, 5, 4), 2,5)
 calificaciones<- t(calificaciones)
 calificaciones
+@
 
-#Calculamos el factor de outlier de cada valor de la muestra con la funcion lof con k=3
+Calculamos el factor de outlier de cada valor de la muestra con la funcion /textit{lof} con k=3
+<<>>=
 lof <- lof(calificaciones, k=3)
 lof
+@
 
-# Resumen sobre los factores de outlier (minimo, 1er qu, mediana, media, 3rd qu, max)
+Resumen sobre los factores de outlier (minimo, 1er qu, mediana, media, 3rd qu, max)
+<<>>=
 summary(lof)
+@
 
-#Representacion gráfica de los factores de outlier de cada dato
+Representacion gráfica de los factores de outlier de cada dato
+<<>>=
 plot(calificaciones, pch = "*", main = "LOF (k=3)")
+@
 
-#Marcamos con un circulo rojo los datos que consideramos anómalos/outliers
+Marcamos con un circulo rojo los datos que consideramos anómalos/outliers
+<<>>=
 points(muestra, cex = (lof-1)*3, pch = 1, col="red")
 @
 
-
-\clearpage
-
+Como vimos en teoría el punto 4 {1,1} es considerado un outlier dentro de la muestra.
 
 \section{Conclusiones}
 
