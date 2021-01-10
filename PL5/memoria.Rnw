@@ -245,7 +245,7 @@ plot(calificaciones, pch = "*", main = "LOF (k=3)")
 
 Marcamos con un circulo rojo los datos que consideramos anómalos/outliers
 <<>>=
-points(muestra, cex = (lof-1)*3, pch = 1, col="red")
+points(calificaciones, cex = (lof-1)*3, pch = 1, col="red")
 @
 
 Como vimos en teoría el punto 4 {1,1} es considerado un outlier dentro de la muestra.
