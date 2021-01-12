@@ -11,7 +11,7 @@
 
 \begin{document}
 \maketitle
-\SweaveOpts{concordance=TRUE, cache=TRUE}
+\input{memoria-concordance}
 
 \begin{abstract}
 En el siguiente documento se presentan los resultados y la solución de la PECL5 del laboratorio de Fundamentos de la Ciencia de los Datos. En esta práctica utilizaremos R para realizar análisis de detección de datos anómalos de una muestra utilizando los distintos métodos estudiados en teoría.
@@ -41,22 +41,35 @@ En este primer apartado se realiza un análisis de detección de datos anómalos
 
 Cargamos primeramente los datos de la muestra1 que serán necesarios para la realización del primer apartado:
 
-<<>>=
-#Cargamos los datos
-muestra1 <- t(matrix(c(3, 2, 3.5, 12, 4.7, 4.1, 5.2, 4.9, 7.1,
-                      6.1, 6.2, 5.2, 14, 5.3), 2, 7, 
-                    dimnames = list(c("r","d"))))
-
-muestra1 = data.frame(muestra1)
-muestra1
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Cargamos los datos
+> muestra1 <- t(matrix(c(3, 2, 3.5, 12, 4.7, 4.1, 5.2, 4.9, 7.1,
++                       6.1, 6.2, 5.2, 14, 5.3), 2, 7, 
++                     dimnames = list(c("r","d"))))
+> muestra1 = data.frame(muestra1)
+> muestra1
+\end{Sinput}
+\begin{Soutput}
+     r    d
+1  3.0  2.0
+2  3.5 12.0
+3  4.7  4.1
+4  5.2  4.9
+5  7.1  6.1
+6  6.2  5.2
+7 14.0  5.3
+\end{Soutput}
+\end{Schunk}
 
 Para mostrar los datos de los outliers de una muestra por pantalla utilizando el método de caja y bigotes utilizaremos la función de R \textit{boxplot} que además de mostrarnos el método caja y bigotes tiene una opción, la cual se puede desactivar, para mostrar un plot.
 
-<<>>=
-#Utilizamos la función quitando la generación del plot y mostramos
-boxplot(muestra1$r, range=1.5, plot = TRUE)
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Utilizamos la función quitando la generación del plot y mostramos
+> boxplot(muestra1$r, range=1.5, plot = TRUE)
+\end{Sinput}
+\end{Schunk}
 
 \begin{figure}[!htbp]
   \centering
@@ -70,27 +83,38 @@ La función \textit{boxplot}, como podemos ver, nos muestra la información del 
 
 Primero hallaremos los cuartiles (q1, q3) de la muestra1, para poder luego poder calcular el intervalo de datos que consideramos normales, es decir, el intervalo de datos no anómalos
 
-<<>>=
-#Calculamos los cuartiles
-q1 <- quantile(muestra1$r, 0.25)
-q3 <- quantile(muestra1$r, 0.75)
-#Calculamos el intervalo de valores normales
-s = 1.5
-intervalo <- c(q1 - s * (q3 - q1), q1 + s*(q3-q1))
-intervalo
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Calculamos los cuartiles
+> q1 <- quantile(muestra1$r, 0.25)
+> q3 <- quantile(muestra1$r, 0.75)
+> #Calculamos el intervalo de valores normales
+> s = 1.5
+> intervalo <- c(q1 - s * (q3 - q1), q1 + s*(q3-q1))
+> intervalo
+\end{Sinput}
+\begin{Soutput}
+  25%   25% 
+0.275 7.925 
+\end{Soutput}
+\end{Schunk}
 
 Una vez realizado lo anterior y teniendo el intervalo de valores normales, recorreremos todos los valores de la muestra y comprobaremos cuáles de esos valores son datos anómalos y cuáles no lo son, es decir, cuales están dentro, o no, del intervalo.
 
-<<>>=
-for (i in 1:length(muestra1$r))
-{
-    if(muestra1$r[i] < intervalo[1] || muestra1$r[i] > intervalo[2])
-    {
-        cat("DATO - [", muestra1$r[i], "] es anómalo.\n")
-    }
-}
-@
+\begin{Schunk}
+\begin{Sinput}
+> for (i in 1:length(muestra1$r))
++ {
++     if(muestra1$r[i] < intervalo[1] || muestra1$r[i] > intervalo[2])
++     {
++         cat("DATO - [", muestra1$r[i], "] es anómalo.\n")
++     }
++ }
+\end{Sinput}
+\begin{Soutput}
+DATO - [ 14 ] es anómalo.
+\end{Soutput}
+\end{Schunk}
 
 Como vemos, a diferencia del \textit{boxplot}, con este algoritmo podemos obtener todos los valores anómalos como una variable para, en caso de necesitarlo, poder trabajar con ellos.
 
@@ -99,60 +123,97 @@ En este apartado realizamos un análisis de detección de datos anómalos utiliz
 
 Usamos la variable muestra1 creada en el apartado anterior y usamos la desviación típica para calcular los intervalos de datos normales. 
 
-<<>>=
-intervalo <- c(mean(muestra1$d) - 2*sd(muestra1$d), mean(muestra1$d) + 2*sd(muestra1$d))
-intervalo
-sdd <- sqrt(var(muestra1$d) * (length(muestra1$d)-1 / length(muestra1$d)))
-@
+\begin{Schunk}
+\begin{Sinput}
+> intervalo <- c(mean(muestra1$d) - 2*sd(muestra1$d), mean(muestra1$d) + 2*sd(muestra1$d))
+> intervalo
+\end{Sinput}
+\begin{Soutput}
+[1] -0.5146825 11.8289682
+\end{Soutput}
+\begin{Sinput}
+> sdd <- sqrt(var(muestra1$d) * (length(muestra1$d)-1 / length(muestra1$d)))
+\end{Sinput}
+\end{Schunk}
 
 Se comprueba que valores se encuentran dentro del intervalo especificado para determinar cuales son datos anómalos. 
 
-<<>>=
-for(i in 1:length(muestra1$d)){
-    if(muestra1$d[i] < intervalo[1] || muestra1$d[i] > intervalo[2]) {
-cat("DATO - [", muestra1$d[i], "] es anómalo.\n")
-    }
-}
-@
+\begin{Schunk}
+\begin{Sinput}
+> for(i in 1:length(muestra1$d)){
++     if(muestra1$d[i] < intervalo[1] || muestra1$d[i] > intervalo[2]) {
++ cat("DATO - [", muestra1$d[i], "] es anómalo.\n")
++     }
++ }
+\end{Sinput}
+\begin{Soutput}
+DATO - [ 12 ] es anómalo.
+\end{Soutput}
+\end{Schunk}
 
 \subsection{Apartado 3 - Detección de datos anómalos. Regresión}
 Para el tercer apartado realizaremos un análisis de detección de datos anómalos sobre la regresión de las variables densidad en función de resistencia, utilizando, para ello, el error estándar de los residuos sobre la muestra1.
 
 Cómo utilizamos la muestra1, y esta ya está definida en el primer apartado, no hace falta volver a definirla de nuevo. Sobre esta muestra, calculamos la regresión y extraemos los residuos.
 
-<<>>=
-#Calculamos la regresión
-regresion = lm(muestra1$d~muestra1$r)
-regresion
-#Calculamos el residuo
-residuos = summary(regresion)$residuals
-residuos
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Calculamos la regresión
+> regresion = lm(muestra1$d~muestra1$r)
+> regresion
+\end{Sinput}
+\begin{Soutput}
+Call:
+lm(formula = muestra1$d ~ muestra1$r)
+
+Coefficients:
+(Intercept)   muestra1$r  
+    6.01445     -0.05723  
+\end{Soutput}
+\begin{Sinput}
+> #Calculamos el residuo
+> residuos = summary(regresion)$residuals
+> residuos
+\end{Sinput}
+\begin{Soutput}
+         1          2          3          4          5          6          7 
+-3.8427477  6.1858698 -1.6454482 -0.8168308  0.4919157 -0.4595958  0.0868370 
+\end{Soutput}
+\end{Schunk}
 
 A continuación, calculamos el error estándar en función de la densidad y los residuos calculados anteriormente:
 
-<<>>=
-#Calculamos el error
-error = sqrt(sum(residuos**2)/length(muestra1$d))
-error
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Calculamos el error
+> error = sqrt(sum(residuos**2)/length(muestra1$d))
+> error
+\end{Sinput}
+\begin{Soutput}
+[1] 2.850242
+\end{Soutput}
+\end{Schunk}
 
 Finalmente, identificamos como anómalos los datos cuyo valor absoluto supere
 el rango correspondiente al grado de outlier $d = 1.5$.
 Finalmente, para obtener los datos anómalos, identificamos qué datos tienen un valor absoluto superior al rango que corresponde al grado de outlier.
 
-<<>>=
-grado_outlier = 1.5
-dsr = grado_outlier * error
-
-for (i in 1:length(muestra1$r))
-{
-    if(abs(residuos[i]) > dsr)
-    {
-        cat("DATO - [", muestra1$d[i], "] es anómalo.\n")
-    }
-}
-@
+\begin{Schunk}
+\begin{Sinput}
+> grado_outlier = 1.5
+> dsr = grado_outlier * error
+> for (i in 1:length(muestra1$r))
++ {
++     if(abs(residuos[i]) > dsr)
++     {
++         cat("DATO - [", muestra1$d[i], "] es anómalo.\n")
++     }
++ }
+\end{Sinput}
+\begin{Soutput}
+DATO - [ 12 ] es anómalo.
+\end{Soutput}
+\end{Schunk}
 
 \subsection{Apartado 4 - Detección de datos anómalos. Algoritmo K-vecinos}
 En este apartado utilizaremos el algoritmo K-vecinos para la detección de los datos anómalos de la muestra de datos de las calificaciones. 
@@ -161,42 +222,75 @@ Utilizaremos un valor de K = 4 y un grado de outlier d = 2.5.
 
 Primero, cargamos nuestros datos en la variable \textit{calificaciones}.
 
-<<>>=
-#Cargamos las calificaciones
-calificaciones <- matrix(c(4, 4, 4, 3, 5, 5, 1, 1, 5, 4), 2,5)
-calificaciones <- t(calificaciones )
-calificaciones
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Cargamos las calificaciones
+> calificaciones <- matrix(c(4, 4, 4, 3, 5, 5, 1, 1, 5, 4), 2,5)
+> calificaciones <- t(calificaciones )
+> calificaciones
+\end{Sinput}
+\begin{Soutput}
+     [,1] [,2]
+[1,]    4    4
+[2,]    4    3
+[3,]    5    5
+[4,]    1    1
+[5,]    5    4
+\end{Soutput}
+\end{Schunk}
 
 A continuación, crearemos una matriz con las distancias entre los puntos de la muestra y la ordenaremos de forma ascendente.
 
-<<>>=
-#Distancias sin ordenar
-distancias <- as.matrix(dist(calificaciones ))
-distancias <- matrix(distancias, 5, 5)
-distancias
-
-for(i in 1:5){
-    distancias[,i] = sort(distancias[,i])
-}
-
-#Distancias ordenadas
-distanciasOrdenadas <- distancias
-distanciasOrdenadas
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Distancias sin ordenar
+> distancias <- as.matrix(dist(calificaciones ))
+> distancias <- matrix(distancias, 5, 5)
+> distancias
+\end{Sinput}
+\begin{Soutput}
+         [,1]     [,2]     [,3]     [,4]     [,5]
+[1,] 0.000000 1.000000 1.414214 4.242641 1.000000
+[2,] 1.000000 0.000000 2.236068 3.605551 1.414214
+[3,] 1.414214 2.236068 0.000000 5.656854 1.000000
+[4,] 4.242641 3.605551 5.656854 0.000000 5.000000
+[5,] 1.000000 1.414214 1.000000 5.000000 0.000000
+\end{Soutput}
+\begin{Sinput}
+> for(i in 1:5){
++     distancias[,i] = sort(distancias[,i])
++ }
+> #Distancias ordenadas
+> distanciasOrdenadas <- distancias
+> distanciasOrdenadas
+\end{Sinput}
+\begin{Soutput}
+         [,1]     [,2]     [,3]     [,4]     [,5]
+[1,] 0.000000 0.000000 0.000000 0.000000 0.000000
+[2,] 1.000000 1.000000 1.000000 3.605551 1.000000
+[3,] 1.000000 1.414214 1.414214 4.242641 1.000000
+[4,] 1.414214 2.236068 2.236068 5.000000 1.414214
+[5,] 4.242641 3.605551 5.656854 5.656854 5.000000
+\end{Soutput}
+\end{Schunk}
 
 Una vez hecho esto, ya podemos saber qué datos son anómalos:
 Consideraremos un dato anómalo cualquier dato su vecino K esté a una
 distancia mayor que el grado de outlier d.
 Cualquier valor cuyo vecino K = 4 esté a una distancia mayor que d = 2.5 será considerado anómalo.
 
-<<>>=
-for(i in 1:5){
-    if(distanciasOrdenadas[4,i] > 2.5) {
-        cat("[", i, "] es un outlier\n")
-    }
-}
-@
+\begin{Schunk}
+\begin{Sinput}
+> for(i in 1:5){
++     if(distanciasOrdenadas[4,i] > 2.5) {
++         cat("[", i, "] es un outlier\n")
++     }
++ }
+\end{Sinput}
+\begin{Soutput}
+[ 4 ] es un outlier
+\end{Soutput}
+\end{Schunk}
 
 
 \section{Ejercicio 2 - Análisis de detección de datos anómalos} 
@@ -216,21 +310,35 @@ En este primer apartado se realiza un análisis de detección de datos anómalos
 
 Leemos primeramente los datos de la muestra de alumnos que serán necesarios para la realización del primer apartado:
 
-<<>>=
-#Leemos los datos del csv
-
-library("xlsx")
-
-alumnos <- read.xlsx("./data/datos_altura_peso.xlsx", 1)
-alumnos
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Leemos los datos del csv
+> 
+> library("xlsx")
+> alumnos <- read.xlsx("./data/datos_altura_peso.xlsx", 1)
+> alumnos
+\end{Sinput}
+\begin{Soutput}
+  altura peso
+1   1.81   73
+2   1.79   75
+3   1.82   78
+4   1.77   70
+5   1.75   69
+6   1.80   79
+7   2.15  100
+8   1.56   50
+\end{Soutput}
+\end{Schunk}
 
 Para mostrar los datos de los outliers de una muestra por pantalla utilizando el método de caja y bigotes utilizaremos la función de R \textit{boxplot} que además de mostrarnos el método caja y bigotes tiene una opción, la cual se puede desactivar, para mostrar un plot.
 
-<<>>=
-#Utilizamos la función quitando la generación del plot y mostramos
-boxplot(alumnos$altura, range=1.5, plot = TRUE)
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Utilizamos la función quitando la generación del plot y mostramos
+> boxplot(alumnos$altura, range=1.5, plot = TRUE)
+\end{Sinput}
+\end{Schunk}
 
 \begin{figure}[!htbp]
   \centering
@@ -244,27 +352,39 @@ La función \textit{boxplot}, como podemos ver, nos muestra la información del 
 
 Primero hallaremos los cuartiles (q1, q3) de las alturas de los alumnos, para poder luego poder calcular el intervalo de datos que consideramos normales, es decir, el intervalo de datos no anómalos
 
-<<>>=
-#Calculamos los cuartiles
-q1 <- quantile(alumnos$altura, 0.25)
-q3 <- quantile(alumnos$altura, 0.75)
-#Calculamos el intervalo de valores normales
-s = 1.5
-intervalo <- c(q1 - s * (q3 - q1), q1 + s*(q3-q1))
-intervalo
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Calculamos los cuartiles
+> q1 <- quantile(alumnos$altura, 0.25)
+> q3 <- quantile(alumnos$altura, 0.75)
+> #Calculamos el intervalo de valores normales
+> s = 1.5
+> intervalo <- c(q1 - s * (q3 - q1), q1 + s*(q3-q1))
+> intervalo
+\end{Sinput}
+\begin{Soutput}
+    25%     25% 
+1.69375 1.83625 
+\end{Soutput}
+\end{Schunk}
 
 Una vez realizado lo anterior y teniendo el intervalo de valores normales, recorreremos todos los valores de la muestra y comprobaremos cuáles de esos valores son datos anómalos y cuáles no lo son, es decir, cuales están dentro, o no, del intervalo.
 
-<<>>=
-for (i in 1:length(alumnos$altura))
-{
-    if(alumnos$altura[i] < intervalo[1] || alumnos$altura[i] > intervalo[2])
-    {
-        cat("DATO - [", alumnos$altura[i], "] es anómalo.\n")
-    }
-}
-@
+\begin{Schunk}
+\begin{Sinput}
+> for (i in 1:length(alumnos$altura))
++ {
++     if(alumnos$altura[i] < intervalo[1] || alumnos$altura[i] > intervalo[2])
++     {
++         cat("DATO - [", alumnos$altura[i], "] es anómalo.\n")
++     }
++ }
+\end{Sinput}
+\begin{Soutput}
+DATO - [ 2.15 ] es anómalo.
+DATO - [ 1.56 ] es anómalo.
+\end{Soutput}
+\end{Schunk}
 
 Como vemos, a diferencia del \textit{boxplot}, con este algoritmo podemos obtener todos los valores anómalos como una variable para, en caso de necesitarlo, poder trabajar con ellos.
 
@@ -273,59 +393,96 @@ En este apartado realizamos un análisis de detección de datos anómalos utiliz
 
 Usamos la variable alumnos creada en el apartado anterior y usamos la desviación típica para calcular los intervalos de datos normales. 
 
-<<>>=
-intervalo <- c(mean(alumnos$peso) - 2*sd(alumnos$peso), mean(alumnos$peso) + 2*sd(alumnos$peso))
-intervalo
-sdd <- sqrt(var(alumnos$peso) * (length(alumnos$peso)-1 / length(alumnos$peso)))
-sdd
-@
+\begin{Schunk}
+\begin{Sinput}
+> intervalo <- c(mean(alumnos$peso) - 2*sd(alumnos$peso), mean(alumnos$peso) + 2*sd(alumnos$peso))
+> intervalo
+\end{Sinput}
+\begin{Soutput}
+[1]  46.62496 101.87504
+\end{Soutput}
+\begin{Sinput}
+> sdd <- sqrt(var(alumnos$peso) * (length(alumnos$peso)-1 / length(alumnos$peso)))
+> sdd
+\end{Sinput}
+\begin{Soutput}
+[1] 38.76129
+\end{Soutput}
+\end{Schunk}
 
 Se comprueba que valores se encuentran dentro del intervalo especificado para determinar cuales son datos anómalos. 
 
-<<>>=
-for(i in 1:length(alumnos$peso)){
-    if(alumnos$peso[i] < intervalo[1] || alumnos$peso[i] > intervalo[2]) {
-cat("DATO - [",alumnos$peso[i], "] es anómalo.\n")
-    }
-}
-@
+\begin{Schunk}
+\begin{Sinput}
+> for(i in 1:length(alumnos$peso)){
++     if(alumnos$peso[i] < intervalo[1] || alumnos$peso[i] > intervalo[2]) {
++ cat("DATO - [",alumnos$peso[i], "] es anómalo.\n")
++     }
++ }
+\end{Sinput}
+\end{Schunk}
 
 \subsection{Apartado 3 - Detección de datos anómalos. Regresión}
 Para el tercer apartado realizaremos un análisis de detección de datos anómalos sobre la regresión de las variables peso en función de altura, utilizando, para ello, el error estándar de los residuos sobre la muestra de alumnos.
 
-<<>>=
-#Calculamos la regresión
-regresion = lm(alumnos$peso~alumnos$altura)
-regresion
-#Calculamos el residuo
-residuos = summary(regresion)$residuals
-residuos
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Calculamos la regresión
+> regresion = lm(alumnos$peso~alumnos$altura)
+> regresion
+\end{Sinput}
+\begin{Soutput}
+Call:
+lm(formula = alumnos$peso ~ alumnos$altura)
+
+Coefficients:
+   (Intercept)  alumnos$altura  
+        -75.90           83.13  
+\end{Soutput}
+\begin{Sinput}
+> #Calculamos el residuo
+> residuos = summary(regresion)$residuals
+> residuos
+\end{Sinput}
+\begin{Soutput}
+         1          2          3          4          5          6          7          8 
+-1.5617221  2.1007958  2.6070190 -1.2366864 -0.5741685  5.2695368 -2.8245256 -3.7802489 
+\end{Soutput}
+\end{Schunk}
 
 A continuación, calculamos el error estándar en función de la peso y los residuos calculados anteriormente:
 
-<<>>=
-#Calculamos el error
-error = sqrt(sum(residuos**2)/length(alumnos$peso))
-error
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Calculamos el error
+> error = sqrt(sum(residuos**2)/length(alumnos$peso))
+> error
+\end{Sinput}
+\begin{Soutput}
+[1] 2.862346
+\end{Soutput}
+\end{Schunk}
 
 Finalmente, identificamos como anómalos los datos cuyo valor absoluto supere
 el rango correspondiente al grado de outlier $d = 1.5$.
 Finalmente, para obtener los datos anómalos, identificamos qué datos tienen un valor absoluto superior al rango que corresponde al grado de outlier.
 
-<<>>=
-grado_outlier = 1.5
-dsr = grado_outlier * error
-
-for (i in 1:length(alumnos$altura))
-{
-    if(abs(residuos[i]) > dsr)
-    {
-        cat("DATO - [", alumnos$peso[i], "] es anómalo.\n")
-    }
-}
-@
+\begin{Schunk}
+\begin{Sinput}
+> grado_outlier = 1.5
+> dsr = grado_outlier * error
+> for (i in 1:length(alumnos$altura))
++ {
++     if(abs(residuos[i]) > dsr)
++     {
++         cat("DATO - [", alumnos$peso[i], "] es anómalo.\n")
++     }
++ }
+\end{Sinput}
+\begin{Soutput}
+DATO - [ 79 ] es anómalo.
+\end{Soutput}
+\end{Schunk}
 
 \subsection{Apartado 4 - Detección de datos anómalos. Algoritmo K-vecinos}
 En este apartado utilizaremos el algoritmo K-vecinos para la detección de los datos anómalos de la muestra de datos de las alturas y pesos de alumnos. 
@@ -335,33 +492,69 @@ Utilizaremos un valor de K = 4 y un grado de outlier d = 2.5.
 Utilizaremos la muestra que tenemos cargada en la variable /textit{alumnos}.
 A continuación, crearemos una matriz con las distancias entre los puntos de la muestra y la ordenaremos de forma ascendente.
 
-<<>>=
-#Distancias sin ordenar
-distancias <- as.matrix(dist(alumnos ))
-distancias <- matrix(distancias, 8, 8)
-distancias
-
-for(i in 1:8){
-    distancias[,i] = sort(distancias[,i])
-}
-
-#Distancias ordenadas
-distanciasOrdenadas <- distancias
-distanciasOrdenadas
-@
+\begin{Schunk}
+\begin{Sinput}
+> #Distancias sin ordenar
+> distancias <- as.matrix(dist(alumnos ))
+> distancias <- matrix(distancias, 8, 8)
+> distancias
+\end{Sinput}
+\begin{Soutput}
+          [,1]      [,2]      [,3]      [,4]      [,5]      [,6]     [,7]     [,8]
+[1,]  0.000000  2.000100  5.000010  3.000267  4.000450  6.000008 27.00214 23.00136
+[2,]  2.000100  0.000000  3.000150  5.000040  6.000133  4.000012 25.00259 25.00106
+[3,]  5.000010  3.000150  0.000000  8.000156  9.000272  1.000200 22.00247 28.00121
+[4,]  3.000267  5.000040  8.000156  0.000000  1.000200  9.000050 30.00241 20.00110
+[5,]  4.000450  6.000133  9.000272  1.000200  0.000000 10.000125 31.00258 19.00095
+[6,]  6.000008  4.000012  1.000200  9.000050 10.000125  0.000000 21.00292 29.00099
+[7,] 27.002141 25.002592 22.002475 30.002407 31.002581 21.002916  0.00000 50.00348
+[8,] 23.001359 25.001058 28.001207 20.001102 19.000950 29.000993 50.00348  0.00000
+\end{Soutput}
+\begin{Sinput}
+> for(i in 1:8){
++     distancias[,i] = sort(distancias[,i])
++ }
+> #Distancias ordenadas
+> distanciasOrdenadas <- distancias
+> distanciasOrdenadas
+\end{Sinput}
+\begin{Soutput}
+          [,1]      [,2]      [,3]      [,4]      [,5]      [,6]     [,7]     [,8]
+[1,]  0.000000  0.000000  0.000000  0.000000  0.000000  0.000000  0.00000  0.00000
+[2,]  2.000100  2.000100  1.000200  1.000200  1.000200  1.000200 21.00292 19.00095
+[3,]  3.000267  3.000150  3.000150  3.000267  4.000450  4.000012 22.00247 20.00110
+[4,]  4.000450  4.000012  5.000010  5.000040  6.000133  6.000008 25.00259 23.00136
+[5,]  5.000010  5.000040  8.000156  8.000156  9.000272  9.000050 27.00214 25.00106
+[6,]  6.000008  6.000133  9.000272  9.000050 10.000125 10.000125 30.00241 28.00121
+[7,] 23.001359 25.001058 22.002475 20.001102 19.000950 21.002916 31.00258 29.00099
+[8,] 27.002141 25.002592 28.001207 30.002407 31.002581 29.000993 50.00348 50.00348
+\end{Soutput}
+\end{Schunk}
 
 Una vez hecho esto, ya podemos saber qué datos son anómalos:
 Consideraremos un dato anómalo cualquier dato su vecino K esté a una
 distancia mayor que el grado de outlier d.
 Cualquier valor cuyo vecino K = 4 esté a una distancia mayor que d = 2.5 será considerado anómalo.
 
-<<>>=
-for(i in 1:8){
-    if(distanciasOrdenadas[4,i] > 2.5) {
-        cat("[", i, "] es un outlier\n")
-    }
-}
-@
+\begin{Schunk}
+\begin{Sinput}
+> for(i in 1:8){
++     if(distanciasOrdenadas[4,i] > 2.5) {
++         cat("[", i, "] es un outlier\n")
++     }
++ }
+\end{Sinput}
+\begin{Soutput}
+[ 1 ] es un outlier
+[ 2 ] es un outlier
+[ 3 ] es un outlier
+[ 4 ] es un outlier
+[ 5 ] es un outlier
+[ 6 ] es un outlier
+[ 7 ] es un outlier
+[ 8 ] es un outlier
+\end{Soutput}
+\end{Schunk}
 
 
 
@@ -380,42 +573,71 @@ Calificaciones - {Teoría, Laboratorio}
 
 
 Para la resolución de este ejercicio haremos uso de funciones pertenecientes a un paquete externo llamado \textit{dbscan}. Para ello instalamos el paquete.
-<<>>=
-install.packages ("dbscan")
-@
+\begin{Schunk}
+\begin{Sinput}
+> install.packages ("dbscan")
+\end{Sinput}
+\end{Schunk}
 
 Utilizamos el comando /textit{library} para cargar el paquete
-<<>>=
-library(dbscan)
-@
+\begin{Schunk}
+\begin{Sinput}
+> library(dbscan)
+\end{Sinput}
+\end{Schunk}
 
 Cargamos los datos de la muestra de calificaciones
-<<>>=
-calificaciones<- matrix(c(4, 4, 4, 3, 5, 5, 1, 1, 5, 4), 2,5)
-calificaciones<- t(calificaciones)
-calificaciones
-@
+\begin{Schunk}
+\begin{Sinput}
+> calificaciones<- matrix(c(4, 4, 4, 3, 5, 5, 1, 1, 5, 4), 2,5)
+> calificaciones<- t(calificaciones)
+> calificaciones
+\end{Sinput}
+\begin{Soutput}
+     [,1] [,2]
+[1,]    4    4
+[2,]    4    3
+[3,]    5    5
+[4,]    1    1
+[5,]    5    4
+\end{Soutput}
+\end{Schunk}
 
 Calculamos el factor de outlier de cada valor de la muestra con la funcion /textit{lof} con k=3
-<<>>=
-lof <- lof(calificaciones, k=3)
-lof
-@
+\begin{Schunk}
+\begin{Sinput}
+> lof <- lof(calificaciones, k=3)
+> lof
+\end{Sinput}
+\begin{Soutput}
+[1] 1.1081851 0.9069197 0.9069197 2.3007780 1.1081851
+\end{Soutput}
+\end{Schunk}
 
 Resumen sobre los factores de outlier (minimo, 1er qu, mediana, media, 3rd qu, max)
-<<>>=
-summary(lof)
-@
+\begin{Schunk}
+\begin{Sinput}
+> summary(lof)
+\end{Sinput}
+\begin{Soutput}
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.9069  0.9069  1.1082  1.2662  1.1082  2.3008 
+\end{Soutput}
+\end{Schunk}
 
 Representación gráfica de los factores de outlier de cada dato
-<<>>=
-plot(calificaciones, pch = "*", main = "LOF (k=3)")
-@
+\begin{Schunk}
+\begin{Sinput}
+> plot(calificaciones, pch = "*", main = "LOF (k=3)")
+\end{Sinput}
+\end{Schunk}
 
 Marcamos con un circulo rojo los datos que consideramos anómalos/outliers
-<<>>=
-points(calificaciones, cex = (lof-1)*3, pch = 1, col="red")
-@
+\begin{Schunk}
+\begin{Sinput}
+> points(calificaciones, cex = (lof-1)*3, pch = 1, col="red")
+\end{Sinput}
+\end{Schunk}
 
 \begin{figure}[!htbp]
   \centering
